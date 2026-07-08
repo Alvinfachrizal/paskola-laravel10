@@ -219,6 +219,48 @@
                 main.container-fluid {
                     padding: 1.25rem !important;
                 }
+
+                /* Mobile Bottom Nav for All */
+                .bottom-nav {
+                    display: flex !important;
+                }
+                #main-content {
+                    padding-bottom: 70px; /* Space for bottom nav */
+                }
+            }
+
+            /* Bottom Nav Styles */
+            .bottom-nav {
+                display: none;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #ffffff;
+                border-top: 1px solid var(--border-color);
+                z-index: 1000;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .bottom-nav-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 0.5rem 0;
+                color: var(--text-muted);
+                text-decoration: none;
+                font-size: 0.7rem;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+            .bottom-nav-item i {
+                font-size: 1.25rem;
+                margin-bottom: 2px;
+            }
+            .bottom-nav-item.active {
+                color: var(--primary-color);
             }
         </style>
     </head>
@@ -332,5 +374,39 @@
                 }
             });
         </script>
+        @if(Auth::check())
+        <!-- Bottom Navigation for All Roles (Mobile) -->
+        <div class="bottom-nav d-lg-none">
+            <a href="{{ route('dashboard') }}" class="bottom-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <i class="bi {{ request()->routeIs('dashboard') ? 'bi-house-fill' : 'bi-house' }}"></i>
+                <span>Beranda</span>
+            </a>
+
+            @if(Auth::user()->hasRole(['Super Admin', 'Admin', 'Kepala Sekolah']))
+                <a href="{{ route('admin.students.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                    <i class="bi {{ request()->routeIs('admin.students.*') ? 'bi-people-fill' : 'bi-people' }}"></i>
+                    <span>Siswa</span>
+                </a>
+                <a href="{{ route('admin.teachers.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}">
+                    <i class="bi {{ request()->routeIs('admin.teachers.*') ? 'bi-person-badge-fill' : 'bi-person-badge' }}"></i>
+                    <span>Guru</span>
+                </a>
+            @else
+                <a href="{{ route('admin.lms-materials.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.lms-*') ? 'active' : '' }}">
+                    <i class="bi {{ request()->routeIs('admin.lms-*') ? 'bi-book-fill' : 'bi-book' }}"></i>
+                    <span>LMS</span>
+                </a>
+                <a href="#" class="bottom-nav-item">
+                    <i class="bi bi-card-checklist"></i>
+                    <span>Tugas</span>
+                </a>
+            @endif
+
+            <a href="{{ route('profile.edit') }}" class="bottom-nav-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                <i class="bi {{ request()->routeIs('profile.edit') ? 'bi-person-fill' : 'bi-person' }}"></i>
+                <span>Profil</span>
+            </a>
+        </div>
+        @endif
     </body>
 </html>

@@ -203,6 +203,8 @@
         function fillLogin(email, password) {
             document.getElementById('email').value = email;
             document.getElementById('password').value = password;
+            // Langsung otomatis submit agar praktis
+            document.getElementById('email').closest('form').submit();
         }
 
         function togglePassword() {
