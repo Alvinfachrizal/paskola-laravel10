@@ -1,4 +1,5 @@
 @extends('layouts.app-bootstrap')
+@section('title', 'Kelas & Mapel')
 
 @section('header')
     <h2 class="h3 mb-1 text-dark fw-bold" style="letter-spacing:-0.5px;">Kelas & Mata Pelajaran</h2>
@@ -243,3 +244,4 @@
     }
 </style>
 @endsection
+

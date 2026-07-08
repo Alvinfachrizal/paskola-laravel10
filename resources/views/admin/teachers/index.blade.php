@@ -1,4 +1,5 @@
 @extends('layouts.app-bootstrap')
+@section('title', 'Data Guru')
 
 @section('header')
     <h2 class="h3 mb-1 text-dark fw-bold" style="letter-spacing:-0.5px;">Data Guru</h2>
@@ -216,3 +217,4 @@
     }
 </style>
 @endsection
+

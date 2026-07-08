@@ -1,4 +1,5 @@
 @extends('layouts.app-bootstrap')
+@section('title', 'Dashboard Orang Tua')
 
 @section('header')
     <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-start align-items-md-center w-100 gap-2 gap-md-3">
@@ -307,3 +308,4 @@
     }
 </style>
 @endsection
+

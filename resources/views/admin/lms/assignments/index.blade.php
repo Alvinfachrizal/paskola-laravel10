@@ -1,4 +1,5 @@
 @extends('layouts.app-bootstrap')
+@section('title', 'Tugas & Ujian')
 
 @section('header')
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
