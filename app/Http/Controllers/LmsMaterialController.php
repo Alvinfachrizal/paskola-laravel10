@@ -19,9 +19,10 @@ class LmsMaterialController extends Controller
         if ($user->hasRole('Guru')) {
             $query->where('teacher_id', $user->id);
         } elseif ($user->hasRole('Siswa')) {
-            // Asumsi model StudentClass bisa mendeteksi kelas aktif
-            // Tapi untuk MVP, siswa menampilkan semua atau sesuai query yang relevan
-            // Nanti bisa difilter
+            if ($user->student && $user->student->classes->count() > 0) {
+                $classIds = $user->student->classes->pluck('id');
+                $query->whereIn('class_id', $classIds);
+            }
         }
 
         $materials = $query->paginate(12);

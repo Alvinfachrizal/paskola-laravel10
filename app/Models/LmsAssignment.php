@@ -16,6 +16,7 @@ class LmsAssignment extends Model
         'subject_id',
         'title',
         'description',
+        'file_url',
         'due_date',
         'max_score',
     ];

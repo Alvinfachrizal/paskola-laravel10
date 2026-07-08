@@ -82,8 +82,11 @@
             </a>
             
             <div class="nav-group-title">Akademik</div>
-            <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-*') ? 'active' : '' }}">
+            <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i> Materi & LMS
+            </a>
+            <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-check"></i> Tugas & Ujian
             </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
@@ -140,8 +143,11 @@
             </a>
 
             <div class="nav-group-title">Akademik</div>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-book"></i> Materi & LMS
+            <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
+                <i class="bi bi-book"></i> Materi Pembelajaran
+            </a>
+            <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-check"></i> Tugas & Ujian
             </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
@@ -158,8 +164,11 @@
 
         @if (Auth::user()->hasRole('Siswa'))
             <div class="nav-group-title">Akademik</div>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-book"></i> Materi & LMS
+            <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
+                <i class="bi bi-book"></i> Materi Pembelajaran
+            </a>
+            <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-check"></i> Tugas & Ujian
             </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi

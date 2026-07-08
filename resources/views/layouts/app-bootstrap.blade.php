@@ -396,8 +396,8 @@
                     <i class="bi {{ request()->routeIs('admin.lms-*') ? 'bi-book-fill' : 'bi-book' }}"></i>
                     <span>LMS</span>
                 </a>
-                <a href="#" class="bottom-nav-item">
-                    <i class="bi bi-card-checklist"></i>
+                <a href="{{ route('admin.lms-assignments.index') }}" class="bottom-nav-item {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
+                    <i class="bi {{ request()->routeIs('admin.lms-assignments.*') ? 'bi-card-checklist' : 'bi-card-checklist' }}"></i>
                     <span>Tugas</span>
                 </a>
             @endif
