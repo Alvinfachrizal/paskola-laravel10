@@ -32,8 +32,8 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 
 ### C. Learning Management System (LMS)
 - [x] Skema Database LMS (Materials, Assignments, Submissions)
-- [ ] API & UI Upload/Manajemen Materi Pembelajaran
-- [ ] API & UI Manajemen Tugas & Ujian Online
+- [x] API & UI Upload/Manajemen Materi Pembelajaran
+- [x] API & UI Manajemen Tugas & Ujian Online
 - [ ] API & UI Pengumpulan Tugas Siswa (Submission)
 - [ ] Penilaian & Riwayat Nilai Tugas
 
