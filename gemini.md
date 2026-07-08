@@ -8,8 +8,8 @@ Dokumen ini berfungsi sebagai **Master Project Plan & Tracker** yang digunakan o
 
 ## 📌 1. Visi Produk & Arsitektur
 - **Tujuan**: Platform terpusat untuk aktivitas akademik, administrasi, dan komunikasi sekolah untuk menggantikan proses manual.
-- **Backend (API-First)**: `Node.js (NestJS) + TypeScript + PostgreSQL`. Backend murni bertindak sebagai REST API (Stateless, JWT) agar 100% siap digunakan oleh Mobile App (React Native/Flutter) di masa depan.
-- **Frontend (Web)**: `Next.js + TypeScript + TailwindCSS`. Desain wajib *mobile-first*, estetik premium, responsif, dan dinamis (animasi mikro).
+- **Arsitektur (Baru)**: Monolith dengan `Laravel 10 + Blade`.
+- **Styling (CSS)**: `Bootstrap 5 (CDN)` sebagai fondasi utama. Tailwind CSS opsional via CDN untuk halaman khusus.
 - **Database**: `PostgreSQL`. Saat ini *single-tenant* (satu sekolah), namun struktur skema dirancang sedemikian rupa agar mendukung *multi-tenant* di masa depan (menggunakan tabel `schools`).
 
 ---
@@ -67,9 +67,9 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [ ] Pengumuman Kelulusan
 
 ### I. Dashboard & Monitoring (Analytics)
-- [ ] Dashboard Berbasis Role: Admin (Statistik Global)
-- [ ] Dashboard Berbasis Role: Guru (Jadwal, Tugas Aktif)
-- [ ] Dashboard Berbasis Role: Siswa & Ortu (Tugas Mendatang, Tagihan, Kehadiran)
+- [x] Dashboard Berbasis Role: Admin (Statistik Global)
+- [x] Dashboard Berbasis Role: Guru (Jadwal, Tugas Aktif)
+- [x] Dashboard Berbasis Role: Siswa & Ortu (Tugas Mendatang, Tagihan, Kehadiran)
 
 ---
 
@@ -98,7 +98,7 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 ---
 
 ## 🎯 4. Fokus Saat Ini (Current Sprint)
-- **Status Proyek Terkini**: Infrastruktur awal Backend dan struktur Database telah didirikan. Manajemen Data Induk / Akademik di Backend & Frontend sebagian besar sudah berdiri.
-- **Sprint Mendatang**: AI akan menunggu instruksi spesifik dari *User* terkait Modul mana yang akan diprioritaskan selanjutnya (Sesuai instruksi *Prioritas MVP* di dokumen spesifikasi aplikasi sekolah).
+- **Status Proyek Terkini**: Sedang dalam tahap migrasi total ke Laravel 10 (Monolith). Modul Database, Auth & Role Management, serta Dashboard Berbasis Role telah selesai.
+- **Sprint Mendatang**: Mengerjakan Modul 3: Administrasi Data Dasar (Siswa, Guru, Kelas, Mapel).
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan seluruh proses Testing dan Implementasinya).*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan).*
