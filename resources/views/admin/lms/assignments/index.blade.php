@@ -26,6 +26,39 @@
     </div>
 @endif
 
+<!-- Filter / Search Bar -->
+<div class="card border-0 rounded-4 shadow-sm mb-4">
+    <div class="card-body p-3 p-md-4">
+        <form action="{{ route('admin.lms-assignments.index') }}" method="GET" class="row g-3 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-light border-start-0 ps-0" placeholder="Cari judul tugas..." style="border-radius: 0 12px 12px 0;">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="subject_id" class="form-select bg-light border-0" style="border-radius: 12px;">
+                    <option value="">Semua Mata Pelajaran</option>
+                    @foreach($subjects as $subject)
+                        <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>{{ $subject->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="class_id" class="form-select bg-light border-0" style="border-radius: 12px;">
+                    <option value="">Semua Kelas</option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}" {{ request('class_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-1 d-grid">
+                <button type="submit" class="btn btn-primary rounded-3"><i class="bi bi-funnel"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Assignments List -->
 <div class="row g-4">
     @forelse($assignments as $assignment)

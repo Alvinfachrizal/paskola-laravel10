@@ -29,33 +29,33 @@
 <!-- Filter / Search Bar -->
 <div class="card border-0 rounded-4 shadow-sm mb-4">
     <div class="card-body p-3 p-md-4">
-        <div class="row g-3 align-items-center">
+        <form action="{{ route('admin.lms-materials.index') }}" method="GET" class="row g-3 align-items-center">
             <div class="col-md-5">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control bg-light border-start-0 ps-0" placeholder="Cari judul materi atau mata pelajaran..." style="border-radius: 0 12px 12px 0;">
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-light border-start-0 ps-0" placeholder="Cari judul materi..." style="border-radius: 0 12px 12px 0;">
                 </div>
             </div>
             <div class="col-md-3">
-                <select class="form-select bg-light border-0" style="border-radius: 12px;">
+                <select name="subject_id" class="form-select bg-light border-0" style="border-radius: 12px;">
                     <option value="">Semua Mata Pelajaran</option>
                     @foreach($subjects as $subject)
-                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                        <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>{{ $subject->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-3">
-                <select class="form-select bg-light border-0" style="border-radius: 12px;">
+                <select name="class_id" class="form-select bg-light border-0" style="border-radius: 12px;">
                     <option value="">Semua Kelas</option>
                     @foreach($classes as $class)
-                        <option value="{{ $class->id }}">{{ $class->name }}</option>
+                        <option value="{{ $class->id }}" {{ request('class_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-1 d-grid">
-                <button class="btn btn-primary rounded-3"><i class="bi bi-funnel"></i></button>
+                <button type="submit" class="btn btn-primary rounded-3"><i class="bi bi-funnel"></i></button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 

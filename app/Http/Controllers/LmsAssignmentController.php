@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class LmsAssignmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $query = LmsAssignment::with(['teacher', 'schoolClass', 'subject', 'submissions'])->latest();
@@ -23,6 +23,17 @@ class LmsAssignmentController extends Controller
                 $classIds = $user->student->classes->pluck('id');
                 $query->whereIn('class_id', $classIds);
             }
+        }
+
+        // Apply filters
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
+        }
+        if ($request->filled('class_id')) {
+            $query->where('class_id', $request->class_id);
         }
 
         $assignments = $query->paginate(12);
