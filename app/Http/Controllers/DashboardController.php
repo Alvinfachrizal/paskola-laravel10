@@ -11,9 +11,13 @@ class DashboardController extends Controller
         $user = $request->user();
 
         // Cek peran user dan arahkan ke view (tampilan) yang sesuai
-        // Admin, Super Admin, dan Kepsek melihat dashboard admin yang berisi statistik global
-        if ($user->hasRole(['Super Admin', 'Admin', 'Kepala Sekolah'])) {
+        if ($user->hasRole(['Super Admin', 'Admin'])) {
             return view('dashboard.admin', compact('user'));
+        } 
+        
+        // Kepala Sekolah melihat dashboard khusus dengan statistik komprehensif
+        if ($user->hasRole('Kepala Sekolah')) {
+            return view('dashboard.kepsek', compact('user'));
         } 
         
         // Guru melihat jadwal mengajar & tugas
