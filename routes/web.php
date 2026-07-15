@@ -66,4 +66,46 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 // Stop impersonation route (accessible from any role if impersonating)
 Route::post('/admin/users/stop-impersonate', [\App\Http\Controllers\UserController::class, 'stopImpersonate'])->middleware('auth')->name('admin.users.stop-impersonate');
 
+// ─── PPDB Publik (tidak butuh login) ───────────────────────────────────────
+Route::prefix('ppdb')->name('ppdb.')->group(function () {
+    // Landing page portal PPDB
+    Route::get('/', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'index'])->name('index');
+
+    // Form pendaftaran baru
+    Route::get('/daftar', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'showForm'])->name('register.form');
+    Route::post('/daftar', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'store'])->name('register.store');
+
+    // Halaman sukses pendaftaran (tampil kode registrasi)
+    Route::get('/sukses', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'success'])->name('register.success');
+
+    // Login ulang: cek status pendaftaran (kode + tanggal lahir)
+    Route::get('/cek-status', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'cekStatusForm'])->name('cek-status.form');
+    Route::post('/cek-status', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'cekStatus'])->name('cek-status.submit');
+
+    // Halaman detail status (setelah login ulang berhasil, disimpan di session)
+    Route::get('/status/{registration_code}', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'showStatus'])->name('status');
+});
+
+// ─── PPDB Admin Panel (hanya Admin & Super Admin) ──────────────────────────
+Route::prefix('admin/ppdb')->name('admin.ppdb.')->middleware(['auth', 'role:Super Admin|Admin'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'index'])->name('index');
+    Route::get('/gelombang', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'waves'])->name('waves');
+    Route::post('/gelombang', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'storeWave'])->name('waves.store');
+    Route::put('/gelombang/{wave}', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'updateWave'])->name('waves.update');
+
+    // Detail & verifikasi dokumen per pendaftar
+    Route::get('/pendaftar/{applicant}', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'show'])->name('applicants.show');
+    Route::post('/pendaftar/{applicant}/dokumen/{document}/verifikasi', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'verifyDocument'])->name('documents.verify');
+
+    // Input nilai seleksi & override status
+    Route::post('/pendaftar/{applicant}/skor', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'storeScore'])->name('scores.store');
+    Route::post('/pendaftar/{applicant}/status', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'updateStatus'])->name('applicants.status');
+
+    // Daftar ulang → buat siswa resmi
+    Route::post('/pendaftar/{applicant}/daftar-ulang', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'processReregistration'])->name('reregistration.process');
+
+    // Rekap kebutuhan seragam
+    Route::get('/rekap-seragam', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'uniformRecap'])->name('uniform-recap');
+});
+
 require __DIR__.'/auth.php';

@@ -96,6 +96,9 @@
             </a>
 
             <div class="nav-group-title">Lainnya</div>
+            <a href="{{ route('admin.ppdb.index') }}" class="sidebar-link {{ request()->routeIs('admin.ppdb.*') ? 'active' : '' }}">
+                <i class="bi bi-clipboard-check"></i> PPDB Online
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-wallet2"></i> Keuangan
             </a>
