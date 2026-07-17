@@ -91,8 +91,11 @@
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-star"></i> Nilai & Rapor
+            <a href="{{ route('grades.input.index') }}" class="sidebar-link {{ request()->routeIs('grades.input.*', 'grades.weights.*') ? 'active' : '' }}">
+                <i class="bi bi-pencil-square"></i> Input Nilai
+            </a>
+            <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
+                <i class="bi bi-star"></i> Nilai &amp; Rapor
             </a>
 
             <div class="nav-group-title">Lainnya</div>
@@ -126,8 +129,11 @@
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-star"></i> Nilai & Rapor
+            <a href="{{ route('grades.input.index') }}" class="sidebar-link {{ request()->routeIs('grades.input.*', 'grades.weights.*') ? 'active' : '' }}">
+                <i class="bi bi-pencil-square"></i> Input Nilai
+            </a>
+            <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
+                <i class="bi bi-star"></i> Nilai &amp; Rapor
             </a>
 
             <div class="nav-group-title">Lainnya</div>

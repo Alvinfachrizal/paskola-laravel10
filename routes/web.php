@@ -63,6 +63,23 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     });
 });
 
+// ─── Modul Nilai & Rapor ─────────────────────────────────────────────────────
+Route::middleware(['auth'])->prefix('grades')->name('grades.')->group(function () {
+
+    // Input nilai (guru mapel)
+    Route::get('/input', [\App\Http\Controllers\Grades\StudentGradeController::class, 'index'])->name('input.index');
+    Route::post('/input', [\App\Http\Controllers\Grades\StudentGradeController::class, 'store'])->name('input.store');
+
+    // Bobot nilai (guru mapel)
+    Route::get('/bobot', [\App\Http\Controllers\Grades\GradeWeightController::class, 'index'])->name('weights.index');
+    Route::post('/bobot', [\App\Http\Controllers\Grades\GradeWeightController::class, 'store'])->name('weights.store');
+
+    // Rapor — dashboard (guru/walas/admin) dan read-only siswa/ortu
+    Route::get('/rapor', [\App\Http\Controllers\Grades\ReportCardController::class, 'index'])->name('report-cards.index');
+    Route::post('/rapor/{report_card}/status', [\App\Http\Controllers\Grades\ReportCardController::class, 'updateStatus'])->name('report-cards.status');
+    Route::post('/rapor/publish', [\App\Http\Controllers\Grades\ReportCardController::class, 'publishBatch'])->name('report-cards.publish');
+});
+
 // Stop impersonation route (accessible from any role if impersonating)
 Route::post('/admin/users/stop-impersonate', [\App\Http\Controllers\UserController::class, 'stopImpersonate'])->middleware('auth')->name('admin.users.stop-impersonate');
 
@@ -84,6 +101,10 @@ Route::prefix('ppdb')->name('ppdb.')->group(function () {
 
     // Halaman detail status (setelah login ulang berhasil, disimpan di session)
     Route::get('/status/{registration_code}', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'showStatus'])->name('status');
+
+    // Upload ulang dokumen yang ditolak (status need_revision)
+    Route::get('/status/{registration_code}/upload-ulang', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'showReupload'])->name('reupload.form');
+    Route::post('/status/{registration_code}/upload-ulang', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'storeReupload'])->name('reupload.store');
 });
 
 // ─── PPDB Admin Panel (hanya Admin & Super Admin) ──────────────────────────

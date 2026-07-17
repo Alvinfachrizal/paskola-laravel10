@@ -100,6 +100,20 @@
                 @endforeach
             </div>
         @endif
+
+        {{-- Tombol upload ulang jika ada dokumen yang ditolak --}}
+        @if($applicant->status->value === 'need_revision' && $applicant->documents->filter(fn($d) => $d->status->value === 'invalid')->count() > 0)
+        <div class="mt-3">
+            <a href="{{ route('ppdb.reupload.form', $applicant->registration_code) }}"
+               class="btn btn-warning fw-semibold w-100 rounded-3">
+                <i class="bi bi-cloud-arrow-up me-2"></i>
+                Upload Ulang Dokumen yang Ditolak
+                <span class="badge bg-dark ms-1 rounded-pill">
+                    {{ $applicant->documents->filter(fn($d) => $d->status->value === 'invalid')->count() }}
+                </span>
+            </a>
+        </div>
+        @endif
     </div>
 
     {{-- Seragam --}}

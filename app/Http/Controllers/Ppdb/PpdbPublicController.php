@@ -227,4 +227,92 @@ class PpdbPublicController extends Controller
 
         return view('ppdb.status', compact('applicant'));
     }
+
+    /**
+     * Tampilkan form upload ulang dokumen yang ditolak.
+     * Hanya bisa diakses jika status applicant = need_revision.
+     */
+    public function showReupload(string $registrationCode)
+    {
+        if (!session("ppdb_auth_{$registrationCode}")) {
+            return redirect()->route('ppdb.cek-status.form')
+                ->with('error', 'Silakan masukkan kode pendaftaran dan tanggal lahir terlebih dahulu.');
+        }
+
+        $applicant = PpdbApplicant::where('registration_code', $registrationCode)
+            ->with('documents')
+            ->firstOrFail();
+
+        // Hanya pendaftar dengan status need_revision yang bisa upload ulang
+        if ($applicant->status->value !== 'need_revision') {
+            return redirect()->route('ppdb.status', $registrationCode)
+                ->with('error', 'Upload ulang hanya tersedia jika ada dokumen yang perlu diperbaiki.');
+        }
+
+        // Ambil hanya dokumen yang statusnya invalid (perlu diupload ulang)
+        // Status adalah Enum, tidak bisa compare dengan string biasa
+        $invalidDocs = $applicant->documents->filter(
+            fn($doc) => $doc->status->value === 'invalid'
+        );
+
+        return view('ppdb.reupload', compact('applicant', 'invalidDocs'));
+    }
+
+    /**
+     * Simpan file upload ulang, reset status dokumen → pending, reset status applicant → pending.
+     */
+    public function storeReupload(Request $request, string $registrationCode)
+    {
+        if (!session("ppdb_auth_{$registrationCode}")) {
+            return redirect()->route('ppdb.cek-status.form');
+        }
+
+        $applicant = PpdbApplicant::where('registration_code', $registrationCode)
+            ->with('documents')
+            ->firstOrFail();
+
+        if ($applicant->status->value !== 'need_revision') {
+            return redirect()->route('ppdb.status', $registrationCode);
+        }
+
+        $request->validate([
+            'dokumen'   => 'required|array|min:1',
+            'dokumen.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        DB::transaction(function () use ($request, $applicant) {
+            foreach ($request->file('dokumen') as $docId => $file) {
+                // firstWhere pada primary key (id) — tidak ada masalah casting
+                $doc = $applicant->documents->first(fn($d) => (string)$d->id === (string)$docId);
+                if (!$doc || $doc->status->value !== 'invalid') continue;
+
+                // Hapus file lama jika ada
+                if ($doc->file_path && Storage::disk('public')->exists($doc->file_path)) {
+                    Storage::disk('public')->delete($doc->file_path);
+                }
+
+                // Simpan file baru
+                $path = $file->store("ppdb/dokumen/{$applicant->registration_code}", 'public');
+
+                // Reset dokumen → pending, hapus catatan penolakan
+                $doc->update([
+                    'file_path'       => $path,
+                    'original_name'   => $file->getClientOriginalName(),
+                    'status'          => 'pending',
+                    'rejection_notes' => null,
+                    'verified_by'     => null,
+                    'verified_at'     => null,
+                ]);
+            }
+
+            // Reset status applicant → pending agar panitia tahu ada dokumen baru
+            $applicant->update([
+                'status'      => \App\Enums\PpdbApplicantStatus::Pending->value,
+                'admin_notes' => 'Pendaftar telah mengupload ulang dokumen yang ditolak.',
+            ]);
+        });
+
+        return redirect()->route('ppdb.status', $registrationCode)
+            ->with('success', 'Dokumen berhasil diupload ulang. Panitia akan memverifikasi kembali dokumen Anda.');
+    }
 }

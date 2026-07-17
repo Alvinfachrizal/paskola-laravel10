@@ -34,8 +34,8 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [x] Skema Database LMS (Materials, Assignments, Submissions)
 - [x] API & UI Upload/Manajemen Materi Pembelajaran
 - [x] API & UI Manajemen Tugas & Ujian Online
-- [ ] API & UI Pengumpulan Tugas Siswa (Submission)
-- [ ] Penilaian & Riwayat Nilai Tugas
+- [x] API & UI Pengumpulan Tugas Siswa (Submission)
+- [x] Penilaian & Riwayat Nilai Tugas (via student_grades + report_cards)
 
 ### D. Kehadiran & Absensi (Attendance)
 - [ ] Skema Database Absensi (Presensi Harian & Mata Pelajaran)
@@ -44,9 +44,16 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [ ] Rekap & Dashboard Kehadiran (Persentase)
 
 ### E. Manajemen Nilai & Rapor (Grading)
-- [ ] API & UI Input Nilai Harian, Tugas, UTS, UAS, Praktik
-- [ ] Kalkulasi Nilai Akhir Otomatis
-- [ ] Generate Rapor Digital (PDF/Cetak)
+- [x] Skema Database: semesters, grade_weights, student_grades, report_cards, grade_change_logs
+- [x] Bobot nilai per komponen per mapel per semester (validasi total 100%)
+- [x] Input nilai manual oleh guru mapel (UTS, UAS, Praktik)
+- [x] Kalkulasi Nilai Akhir Otomatis (berbobot, auto-recalculate)
+- [x] Verifikasi Rapor oleh Wali Kelas (draft→terverifikasi)
+- [x] Publish Rapor oleh Admin/Kepsek
+- [x] Halaman Rapor Read-only untuk Siswa & Ortu (hanya status published)
+- [x] Audit Log Perubahan Nilai (grade_change_logs)
+- [x] Laravel Policy: StudentGradePolicy & ReportCardPolicy
+- [ ] Generate Rapor PDF/Cetak
 
 ### F. Komunikasi & Pengumuman
 - [x] Skema Database `announcements` terbuat
@@ -61,10 +68,17 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [ ] Riwayat & Status Pembayaran untuk Dashboard Ortu
 
 ### H. PPDB Online (Penerimaan Siswa Baru)
-- [ ] Landing Page Pendaftaran
-- [ ] Form Pendaftaran, Upload Dokumen, dan Sistem Seleksi
-- [ ] Pembayaran Biaya Pendaftaran
-- [ ] Pengumuman Kelulusan
+- [x] Landing Page Pendaftaran (Portal publik `/ppdb`) — `docs/ppdb.md`
+- [x] Form Pendaftaran, Upload Dokumen, dan Data Seragam (Conditional JS)
+- [x] Login ulang calon siswa (Kode Pendaftaran + Tanggal Lahir, tanpa OTP)
+- [x] Dashboard Panitia: Verifikasi Dokumen per item
+- [x] Dashboard Panitia: Input Nilai Seleksi + Override Status manual
+- [x] Alur Daftar Ulang: otomatis buat akun `User` + data `Student`
+- [x] Dashboard Panitia: Rekap Kebutuhan Seragam (printable)
+- [x] Manajemen Gelombang PPDB (multi-gelombang, berbayar/gratis)
+- [x] Upload ulang dokumen oleh pendaftar (jika status `need_revision`)
+- [ ] Integrasi Payment Gateway untuk gelombang berbayar
+- [ ] Notifikasi email/WhatsApp otomatis saat status berubah
 
 ### I. Dashboard & Monitoring (Analytics)
 - [x] Dashboard Berbasis Role: Admin (Statistik Global)
@@ -98,7 +112,22 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 ---
 
 ## 🎯 4. Fokus Saat Ini (Current Sprint)
-- **Status Proyek Terkini**: Sedang dalam tahap migrasi total ke Laravel 10 (Monolith). Modul Database, Auth & Role Management, serta Dashboard Berbasis Role telah selesai.
-- **Sprint Mendatang**: Mengerjakan Modul 3: Administrasi Data Dasar (Siswa, Guru, Kelas, Mapel).
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan).*
+### ✅ Modul yang Sudah Selesai
+| Modul | Keterangan |
+|---|---|
+| A. Fondasi & Auth | Login multi-role, RBAC, JWT |
+| B. Administrasi Master Data | Siswa, Guru, Kelas, Mapel, Tahun Ajaran |
+| C. LMS (lengkap) | Materi, Tugas, Submission, Penilaian via student_grades |
+| E. Nilai & Rapor (inti) | Bobot, input nilai, kalkulasi otomatis, verifikasi, publish, RBAC policy |
+| H. PPDB Online (inti) | Portal publik, dashboard panitia, daftar ulang, rekap seragam, upload ulang |
+| I. Dashboard Role | Admin, Guru, Siswa, Ortu |
+
+### 🔄 Sprint Berikutnya (Rekomendasi Urutan)
+1. **Kehadiran & Absensi** (Modul D — Presensi harian oleh Guru)
+2. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
+3. **Keuangan / SPP** (Modul G)
+4. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
+5. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
+
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-07-16 setelah Modul Nilai & Rapor selesai.)*
