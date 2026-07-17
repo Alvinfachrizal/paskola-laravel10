@@ -34,8 +34,9 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [x] Skema Database LMS (Materials, Assignments, Submissions)
 - [x] API & UI Upload/Manajemen Materi Pembelajaran
 - [x] API & UI Manajemen Tugas & Ujian Online
-- [x] API & UI Pengumpulan Tugas Siswa (Submission)
+- [x] API & UI Pengumpulan Tugas Siswa (Submission) — modal kumpul, status cek, kumpul ulang
 - [x] Penilaian & Riwayat Nilai Tugas (via student_grades + report_cards)
+- [x] RBAC: Guru CRUD tugas/materi, lihat & nilai submission; Siswa hanya kumpul & lihat milik sendiri
 
 ### D. Kehadiran & Absensi (Attendance)
 - [ ] Skema Database Absensi (Presensi Harian & Mata Pelajaran)
@@ -53,6 +54,7 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [x] Halaman Rapor Read-only untuk Siswa & Ortu (hanya status published)
 - [x] Audit Log Perubahan Nilai (grade_change_logs)
 - [x] Laravel Policy: StudentGradePolicy & ReportCardPolicy
+- [x] RBAC Route: Guru input nilai & bobot; Siswa/Ortu hanya akses /rapor; publish hanya Admin/Kepsek
 - [ ] Generate Rapor PDF/Cetak
 
 ### F. Komunikasi & Pengumuman

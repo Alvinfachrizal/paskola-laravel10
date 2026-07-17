@@ -13,15 +13,19 @@ class LmsSubmission extends Model
         'assignment_id',
         'student_id',
         'file_url',
+        'file_path',
         'text_content',
+        'notes',
         'submitted_at',
         'score',
         'feedback',
+        'graded_at',
         'status',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
+        'graded_at'    => 'datetime',
     ];
 
     public function assignment()
@@ -29,6 +33,7 @@ class LmsSubmission extends Model
         return $this->belongsTo(LmsAssignment::class, 'assignment_id');
     }
 
+    /** student_id FK ke users.id */
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');

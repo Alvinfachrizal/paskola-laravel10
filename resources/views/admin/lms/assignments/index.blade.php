@@ -127,15 +127,43 @@
                         </div>
                     @endif
 
-                    <div class="d-grid mt-auto">
+                    <div class="d-grid mt-auto gap-2">
                         @if (Auth::user()->hasRole('Siswa'))
-                            <button class="btn {{ $isPastDue ? 'btn-outline-danger' : 'btn-outline-primary' }} fw-medium rounded-pill shadow-sm" {{ $isPastDue ? 'disabled' : '' }}>
-                                <i class="bi bi-cloud-upload me-1"></i> {{ $isPastDue ? 'Tenggat Berlalu' : 'Kumpulkan Tugas' }}
-                            </button>
+                            @php
+                                $mySubmission = $assignment->submissions->firstWhere('student_id', Auth::id());
+                            @endphp
+                            @if($mySubmission)
+                                <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3 bg-success-subtle border border-success">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span class="text-success fw-semibold small">Sudah Dikumpulkan</span>
+                                    @if($mySubmission->score !== null)
+                                        <span class="badge bg-success ms-auto">Nilai: {{ $mySubmission->score }}</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark ms-auto">Menunggu Penilaian</span>
+                                    @endif
+                                </div>
+                                @if(!$isPastDue)
+                                <button class="btn btn-outline-secondary fw-medium rounded-pill shadow-sm btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#submitModal-{{ $assignment->id }}">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Kumpul Ulang
+                                </button>
+                                @endif
+                            @elseif($isPastDue)
+                                <button class="btn btn-outline-danger fw-medium rounded-pill shadow-sm" disabled>
+                                    <i class="bi bi-clock me-1"></i> Tenggat Berlalu
+                                </button>
+                            @else
+                                <button class="btn btn-primary fw-medium rounded-pill shadow-sm"
+                                    data-bs-toggle="modal" data-bs-target="#submitModal-{{ $assignment->id }}">
+                                    <i class="bi bi-cloud-upload me-1"></i> Kumpulkan Tugas
+                                </button>
+                            @endif
                         @else
-                            <button class="btn btn-outline-dark fw-medium rounded-pill shadow-sm">
-                                <i class="bi bi-journal-text me-1"></i> Lihat Pengumpulan ({{ $assignment->submissions_count ?? 0 }})
-                            </button>
+                            <a href="{{ route('admin.lms-submissions.index') }}?assignment_id={{ $assignment->id }}"
+                               class="btn btn-outline-dark fw-medium rounded-pill shadow-sm">
+                                <i class="bi bi-journal-text me-1"></i>
+                                Pengumpulan ({{ $assignment->submissions_count ?? $assignment->submissions->count() }})
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -227,6 +255,51 @@
     </div>
 </div>
 @endhasanyrole
+
+{{-- ═══ Modal Kumpulkan Tugas (Siswa) ═══ --}}
+@if(Auth::user()->hasRole('Siswa'))
+@foreach($assignments as $assignment)
+<div class="modal fade" id="submitModal-{{ $assignment->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-header border-bottom-0 px-4 pt-4 pb-0">
+                <div>
+                    <h5 class="modal-title fw-bold" style="font-size:1rem;">Kumpulkan Tugas</h5>
+                    <p class="text-muted mb-0 small">{{ $assignment->title }}</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="{{ route('admin.lms-submissions.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="assignment_id" value="{{ $assignment->id }}">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Catatan / Jawaban (Opsional)</label>
+                        <textarea name="notes" class="form-control bg-light border-0 rounded-3"
+                            rows="3" placeholder="Tulis catatan atau jawaban singkat..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-muted">Upload File Jawaban</label>
+                        <input type="file" name="file" class="form-control bg-light border-0 rounded-3"
+                            accept=".pdf,.doc,.docx,.zip,.jpg,.jpeg,.png">
+                        <div class="form-text mt-1 small">PDF, Word, ZIP, atau Gambar. Maks 20MB.</div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">
+                            <i class="bi bi-cloud-upload me-1"></i> Kumpulkan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+@endif
 
 <style>
     .transition-hover {

@@ -10,7 +10,6 @@
     </div>
     
     <div class="p-3">
-        <!-- Sidebar Profile info is in Topbar now, but let's add a small pill to match the design if needed -->
         <div class="d-flex align-items-center gap-2 p-2 mb-4 rounded-3" style="background-color: #eff6ff; border: 1px solid #dbeafe;">
             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-weight:600; font-size:0.75rem;">
                 {{ substr(Auth::user()->name, 0, 2) }}
@@ -63,6 +62,9 @@
             <i class="bi bi-grid-1x2"></i> Dashboard
         </a>
 
+        {{-- ═══════════════════════════════════════════════════════════
+             SUPER ADMIN & ADMIN
+        ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole(['Super Admin', 'Admin']))
             <div class="nav-group-title">Administrasi</div>
             <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
@@ -80,13 +82,16 @@
             <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Pengguna
             </a>
-            
+
             <div class="nav-group-title">Akademik</div>
             <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i> Materi & LMS
             </a>
             <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
                 <i class="bi bi-journal-check"></i> Tugas & Ujian
+            </a>
+            <a href="{{ route('admin.lms-submissions.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-submissions.*') ? 'active' : '' }}">
+                <i class="bi bi-cloud-arrow-up"></i> Pengumpulan Tugas
             </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
@@ -95,7 +100,7 @@
                 <i class="bi bi-pencil-square"></i> Input Nilai
             </a>
             <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
-                <i class="bi bi-star"></i> Nilai &amp; Rapor
+                <i class="bi bi-star"></i> Nilai & Rapor
             </a>
 
             <div class="nav-group-title">Lainnya</div>
@@ -113,6 +118,9 @@
             </a>
         @endif
 
+        {{-- ═══════════════════════════════════════════════════════════
+             KEPALA SEKOLAH — Lihat semua, publish rapor, tidak input nilai
+        ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole('Kepala Sekolah'))
             <div class="nav-group-title">Administrasi</div>
             <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
@@ -124,27 +132,27 @@
             <a href="{{ route('admin.classes.index') }}" class="sidebar-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                 <i class="bi bi-building"></i> Kelas & Mapel
             </a>
-            
+
             <div class="nav-group-title">Akademik</div>
+            <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-check"></i> Tugas & Ujian
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
-            <a href="{{ route('grades.input.index') }}" class="sidebar-link {{ request()->routeIs('grades.input.*', 'grades.weights.*') ? 'active' : '' }}">
-                <i class="bi bi-pencil-square"></i> Input Nilai
-            </a>
             <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
-                <i class="bi bi-star"></i> Nilai &amp; Rapor
+                <i class="bi bi-star"></i> Nilai & Rapor
             </a>
 
             <div class="nav-group-title">Lainnya</div>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-gear"></i> Pengaturan
-            </a>
         @endif
 
+        {{-- ═══════════════════════════════════════════════════════════
+             GURU — Input nilai, atur bobot, verifikasi (jika walas), CRUD tugas
+        ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole('Guru'))
             <div class="nav-group-title">Administrasi</div>
             <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
@@ -158,10 +166,16 @@
             <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
                 <i class="bi bi-journal-check"></i> Tugas & Ujian
             </a>
+            <a href="{{ route('admin.lms-submissions.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-submissions.*') ? 'active' : '' }}">
+                <i class="bi bi-cloud-arrow-up"></i> Pengumpulan Siswa
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('grades.input.index') }}" class="sidebar-link {{ request()->routeIs('grades.input.*', 'grades.weights.*') ? 'active' : '' }}">
+                <i class="bi bi-pencil-square"></i> Input Nilai
+            </a>
+            <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
                 <i class="bi bi-star"></i> Nilai & Rapor
             </a>
 
@@ -171,6 +185,9 @@
             </a>
         @endif
 
+        {{-- ═══════════════════════════════════════════════════════════
+             SISWA — Lihat materi, kumpul tugas, lihat rapor sendiri (published)
+        ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole('Siswa'))
             <div class="nav-group-title">Akademik</div>
             <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
@@ -179,11 +196,14 @@
             <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
                 <i class="bi bi-journal-check"></i> Tugas & Ujian
             </a>
+            <a href="{{ route('admin.lms-submissions.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-submissions.*') ? 'active' : '' }}">
+                <i class="bi bi-cloud-upload"></i> Tugas Saya
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-star"></i> Nilai & Rapor
+            <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
+                <i class="bi bi-star"></i> Rapor Nilai
             </a>
 
             <div class="nav-group-title">Lainnya</div>
@@ -192,13 +212,16 @@
             </a>
         @endif
 
+        {{-- ═══════════════════════════════════════════════════════════
+             ORANG TUA — Hanya lihat rapor anaknya (published)
+        ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole('Ortu'))
             <div class="nav-group-title">Akademik</div>
             <a href="#" class="sidebar-link">
-                <i class="bi bi-calendar-check"></i> Absensi
+                <i class="bi bi-calendar-check"></i> Absensi Anak
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-star"></i> Nilai & Rapor
+            <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
+                <i class="bi bi-star"></i> Rapor Nilai
             </a>
 
             <div class="nav-group-title">Lainnya</div>

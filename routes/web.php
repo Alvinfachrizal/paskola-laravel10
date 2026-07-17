@@ -55,29 +55,42 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::resource('students', \App\Http\Controllers\StudentController::class)->only(['index', 'show']);
     });
 
-    // Modul LMS (Materi, Tugas, Pengumpulan)
-    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah|Guru|Siswa'])->group(function () {
+    // ── LMS: semua role yang login dapat mengakses
+    // Filter per-role ditangani di dalam controller masing-masing
+    Route::middleware(['auth'])->group(function () {
         Route::resource('lms-materials', \App\Http\Controllers\LmsMaterialController::class);
         Route::resource('lms-assignments', \App\Http\Controllers\LmsAssignmentController::class);
-        Route::resource('lms-submissions', \App\Http\Controllers\LmsSubmissionController::class);
+        Route::resource('lms-submissions', \App\Http\Controllers\LmsSubmissionController::class)
+            ->only(['index', 'show', 'store', 'update']);
     });
+
 });
 
 // ─── Modul Nilai & Rapor ─────────────────────────────────────────────────────
 Route::middleware(['auth'])->prefix('grades')->name('grades.')->group(function () {
 
-    // Input nilai (guru mapel)
-    Route::get('/input', [\App\Http\Controllers\Grades\StudentGradeController::class, 'index'])->name('input.index');
-    Route::post('/input', [\App\Http\Controllers\Grades\StudentGradeController::class, 'store'])->name('input.store');
+    // Input nilai & atur bobot: hanya Guru, Admin, Kepsek
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah|Guru'])->group(function () {
+        Route::get('/input', [\App\Http\Controllers\Grades\StudentGradeController::class, 'index'])->name('input.index');
+        Route::post('/input', [\App\Http\Controllers\Grades\StudentGradeController::class, 'store'])->name('input.store');
+        Route::get('/bobot', [\App\Http\Controllers\Grades\GradeWeightController::class, 'index'])->name('weights.index');
+        Route::post('/bobot', [\App\Http\Controllers\Grades\GradeWeightController::class, 'store'])->name('weights.store');
+    });
 
-    // Bobot nilai (guru mapel)
-    Route::get('/bobot', [\App\Http\Controllers\Grades\GradeWeightController::class, 'index'])->name('weights.index');
-    Route::post('/bobot', [\App\Http\Controllers\Grades\GradeWeightController::class, 'store'])->name('weights.store');
+    // Rapor — semua role login bisa akses (controller yang filter per role)
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah|Guru|Siswa|Ortu'])->group(function () {
+        Route::get('/rapor', [\App\Http\Controllers\Grades\ReportCardController::class, 'index'])->name('report-cards.index');
+    });
 
-    // Rapor — dashboard (guru/walas/admin) dan read-only siswa/ortu
-    Route::get('/rapor', [\App\Http\Controllers\Grades\ReportCardController::class, 'index'])->name('report-cards.index');
-    Route::post('/rapor/{report_card}/status', [\App\Http\Controllers\Grades\ReportCardController::class, 'updateStatus'])->name('report-cards.status');
-    Route::post('/rapor/publish', [\App\Http\Controllers\Grades\ReportCardController::class, 'publishBatch'])->name('report-cards.publish');
+    // Update status rapor: hanya Guru (walas) + Admin/Kepsek
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah|Guru'])->group(function () {
+        Route::post('/rapor/{report_card}/status', [\App\Http\Controllers\Grades\ReportCardController::class, 'updateStatus'])->name('report-cards.status');
+    });
+
+    // Publish rapor: hanya Admin/Kepsek
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah'])->group(function () {
+        Route::post('/rapor/publish', [\App\Http\Controllers\Grades\ReportCardController::class, 'publishBatch'])->name('report-cards.publish');
+    });
 });
 
 // Stop impersonation route (accessible from any role if impersonating)
