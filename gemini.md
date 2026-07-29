@@ -44,6 +44,21 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [ ] API & UI Pengajuan Izin Online (Siswa/Ortu) & Approval Guru
 - [ ] Rekap & Dashboard Kehadiran (Persentase)
 
+### J. Kalender Akademik
+- [x] Skema Database: event_categories, academic_events
+- [x] Data master kategori fleksibel (Admin bisa tambah kapan saja, tidak hardcode)
+- [x] CRUD Event oleh Admin/Kepsek (sekolah-wide & per kelas, termasuk kategori libur)
+- [x] CRUD Event oleh Guru (semua kelas aktif; TIDAK bisa pilih kategori is_holiday)
+- [x] Tampilan kalender bulanan grid dengan warna per kategori + navigasi bulan
+- [x] Modal tambah/edit event dengan RBAC-aware dropdown
+- [x] `AcademicCalendarService::isHoliday()` — reusable untuk Modul Jadwal Pelajaran
+- [x] `AcademicCalendarService::getEventsForPeriod()` — render kalender
+- [x] Unit Test 5 skenario (school-wide, class-specific, hari biasa, non-holiday, multi-day)
+- [x] Laravel Policy: AcademicEventPolicy & EventCategoryPolicy
+- [x] RBAC Route: Admin/Kepsek full CRUD + kategori; Guru event saja; Siswa/Ortu read-only
+- [x] Seeder demo data (5 kategori + 7 event termasuk HUT RI, Idul Fitri, UTS)
+- [x] Dokumentasi `docs/kalender-akademik.md` + panduan integrasi modul Jadwal
+
 ### E. Manajemen Nilai & Rapor (Grading)
 - [x] Skema Database: semesters, grade_weights, student_grades, report_cards, grade_change_logs
 - [x] Bobot nilai per komponen per mapel per semester (validasi total 100%)
@@ -124,12 +139,14 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 | E. Nilai & Rapor (inti) | Bobot, input nilai, kalkulasi otomatis, verifikasi, publish, RBAC policy |
 | H. PPDB Online (inti) | Portal publik, dashboard panitia, daftar ulang, rekap seragam, upload ulang |
 | I. Dashboard Role | Admin, Guru, Siswa, Ortu |
+| J. Kalender Akademik | Grid kalender bulanan, CRUD event, kategori fleksibel, AcademicCalendarService, unit test 5/5 |
 
 ### 🔄 Sprint Berikutnya (Rekomendasi Urutan)
-1. **Kehadiran & Absensi** (Modul D — Presensi harian oleh Guru)
-2. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
-3. **Keuangan / SPP** (Modul G)
-4. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
-5. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
+1. **Jadwal Pelajaran** (Baru — fondasi sebelum Absensi, pakai AcademicCalendarService)
+2. **Kehadiran & Absensi** (Modul D — bergantung pada Jadwal Pelajaran)
+3. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
+4. **Keuangan / SPP** (Modul G)
+5. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
+6. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-07-16 setelah Modul Nilai & Rapor selesai.)*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-07-27 setelah Modul Kalender Akademik selesai.)*

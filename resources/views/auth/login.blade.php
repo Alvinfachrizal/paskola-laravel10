@@ -181,13 +181,13 @@
                     <div class="bg-white px-4 text-xs text-gray-400 relative z-10">Demo Akun (klik untuk isi otomatis)</div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 mb-2">
-                    <button type="button" onclick="fillLogin('superadmin@paskola.com', 'password')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Admin</button>
-                    <button type="button" onclick="fillLogin('kepsek@paskola.com', 'password')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Kepsek</button>
-                    <button type="button" onclick="fillLogin('guru@paskola.com', 'password')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Guru</button>
+                    <button type="button" onclick="fillLogin('superadmin@paskola.com', 'password123')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Super Admin</button>
+                    <button type="button" onclick="fillLogin('kepsek@paskola.com', 'password123')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Kepsek</button>
+                    <button type="button" onclick="fillLogin('guru@paskola.com', 'password123')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Guru</button>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="fillLogin('siswa@paskola.com', 'password')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Siswa</button>
-                    <button type="button" onclick="fillLogin('ortu@paskola.com', 'password')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Ortu</button>
+                    <button type="button" onclick="fillLogin('siswa@paskola.com', 'password123')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Siswa</button>
+                    <button type="button" onclick="fillLogin('ortu@paskola.com', 'password123')" class="py-1.5 px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-xs font-medium hover:bg-blue-100 transition-colors">Ortu</button>
                 </div>
             </div>
         </div>

@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class School extends Model
 {
     use HasFactory, \Illuminate\Database\Eloquent\Concerns\HasUuids;
+
+    protected $fillable = ['name', 'address', 'phone', 'email', 'logo_url'];
 }

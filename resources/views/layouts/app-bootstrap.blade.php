@@ -263,6 +263,7 @@
                 color: var(--primary-color);
             }
         </style>
+        @yield('styles')
     </head>
     <body>
         <div id="app-wrapper">
@@ -374,6 +375,7 @@
                 }
             });
         </script>
+        @yield('scripts')
         @if(Auth::check())
         <!-- Bottom Navigation for All Roles (Mobile) -->
         <div class="bottom-nav d-lg-none">

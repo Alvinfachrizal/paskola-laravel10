@@ -96,6 +96,30 @@ Route::middleware(['auth'])->prefix('grades')->name('grades.')->group(function (
 // Stop impersonation route (accessible from any role if impersonating)
 Route::post('/admin/users/stop-impersonate', [\App\Http\Controllers\UserController::class, 'stopImpersonate'])->middleware('auth')->name('admin.users.stop-impersonate');
 
+// ─── Kalender Akademik ────────────────────────────────────────────────────────
+Route::middleware('auth')->prefix('calendar')->name('calendar.')->group(function () {
+
+    // Tampilan kalender: semua role yang login
+    Route::get('/', [\App\Http\Controllers\Calendar\AcademicEventController::class, 'index'])->name('index');
+
+    // CRUD event: Admin, Kepsek, dan Guru
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah|Guru'])->group(function () {
+        Route::post('/events', [\App\Http\Controllers\Calendar\AcademicEventController::class, 'store'])->name('events.store');
+        Route::put('/events/{event}', [\App\Http\Controllers\Calendar\AcademicEventController::class, 'update'])->name('events.update');
+        Route::delete('/events/{event}', [\App\Http\Controllers\Calendar\AcademicEventController::class, 'destroy'])->name('events.destroy');
+    });
+
+    // Manajemen kategori: hanya Admin & Kepsek
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah'])->prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Calendar\EventCategoryController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Calendar\EventCategoryController::class, 'store'])->name('store');
+        Route::put('/{category}', [\App\Http\Controllers\Calendar\EventCategoryController::class, 'update'])->name('update');
+        Route::delete('/{category}', [\App\Http\Controllers\Calendar\EventCategoryController::class, 'destroy'])->name('destroy');
+    });
+});
+
+
+
 // ─── PPDB Publik (tidak butuh login) ───────────────────────────────────────
 Route::prefix('ppdb')->name('ppdb.')->group(function () {
     // Landing page portal PPDB

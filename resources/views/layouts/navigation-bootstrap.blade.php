@@ -93,6 +93,9 @@
             <a href="{{ route('admin.lms-submissions.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-submissions.*') ? 'active' : '' }}">
                 <i class="bi bi-cloud-arrow-up"></i> Pengumpulan Tugas
             </a>
+            <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar3"></i> Kalender Akademik
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
@@ -137,6 +140,9 @@
             <a href="{{ route('admin.lms-assignments.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-assignments.*') ? 'active' : '' }}">
                 <i class="bi bi-journal-check"></i> Tugas & Ujian
             </a>
+            <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar3"></i> Kalender Akademik
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
@@ -169,6 +175,9 @@
             <a href="{{ route('admin.lms-submissions.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-submissions.*') ? 'active' : '' }}">
                 <i class="bi bi-cloud-arrow-up"></i> Pengumpulan Siswa
             </a>
+            <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar3"></i> Kalender Akademik
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
@@ -199,6 +208,9 @@
             <a href="{{ route('admin.lms-submissions.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-submissions.*') ? 'active' : '' }}">
                 <i class="bi bi-cloud-upload"></i> Tugas Saya
             </a>
+            <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar3"></i> Kalender Akademik
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
@@ -217,6 +229,9 @@
         ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole('Ortu'))
             <div class="nav-group-title">Akademik</div>
+            <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar3"></i> Kalender Akademik
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi Anak
             </a>
