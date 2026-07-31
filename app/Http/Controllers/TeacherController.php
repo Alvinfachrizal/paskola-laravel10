@@ -24,9 +24,11 @@ class TeacherController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('admin.teachers.create');
+        $schoolId = $request->user()->school_id;
+        $subjects = \App\Models\Subject::where('school_id', $schoolId)->orderBy('name')->get();
+        return view('admin.teachers.create', compact('subjects'));
     }
 
     /**
@@ -92,9 +94,11 @@ class TeacherController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Teacher $teacher)
+    public function edit(Request $request, Teacher $teacher)
     {
-        return view('admin.teachers.edit', compact('teacher'));
+        $schoolId = $request->user()->school_id;
+        $subjects = \App\Models\Subject::where('school_id', $schoolId)->orderBy('name')->get();
+        return view('admin.teachers.edit', compact('teacher', 'subjects'));
     }
 
     /**

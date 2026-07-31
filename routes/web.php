@@ -118,6 +118,39 @@ Route::middleware('auth')->prefix('calendar')->name('calendar.')->group(function
     });
 });
 
+// ─── MODUL JADWAL PELAJARAN (TIMETABLE) ───
+
+// Jadwal Saya (Guru & Siswa)
+Route::middleware(['auth'])->prefix('timetable')->name('timetable.')->group(function () {
+    Route::get('/my-schedule', [\App\Http\Controllers\Timetable\MyScheduleController::class, 'index'])->name('my-schedule');
+});
+
+Route::middleware(['role:Super Admin|Admin|Kepala Sekolah'])->prefix('timetable')->name('timetable.')->group(function () {
+    // Setting (Hari & Waktu)
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Timetable\SettingController::class, 'index'])->name('index');
+        Route::post('/days', [\App\Http\Controllers\Timetable\SettingController::class, 'updateDays'])->name('days.update');
+        Route::post('/timeslots', [\App\Http\Controllers\Timetable\SettingController::class, 'storeTimeSlot'])->name('timeslots.store');
+        Route::delete('/timeslots/{id}', [\App\Http\Controllers\Timetable\SettingController::class, 'destroyTimeSlot'])->name('timeslots.destroy');
+    });
+
+    // Manajemen Ruangan (Rooms)
+    Route::prefix('rooms')->name('rooms.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Timetable\RoomController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Timetable\RoomController::class, 'store'])->name('store');
+        Route::put('/{id}', [\App\Http\Controllers\Timetable\RoomController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Timetable\RoomController::class, 'destroy'])->name('destroy');
+    });
+
+    // Pembuatan Jadwal Pelajaran Utama (Schedules)
+    Route::prefix('schedules')->name('schedules.')->group(function () {
+        Route::get('/create', [\App\Http\Controllers\Timetable\ScheduleController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Timetable\ScheduleController::class, 'store'])->name('store');
+        Route::delete('/{id}', [\App\Http\Controllers\Timetable\ScheduleController::class, 'destroy'])->name('destroy');
+        Route::get('/get-teachers', [\App\Http\Controllers\Timetable\ScheduleController::class, 'getTeachersBySubject'])->name('get-teachers');
+    });
+});
+
 
 
 // ─── PPDB Publik (tidak butuh login) ───────────────────────────────────────

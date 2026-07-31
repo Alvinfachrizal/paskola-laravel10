@@ -79,7 +79,14 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="subject_specialty" class="form-label">Spesialisasi Mata Pelajaran (Opsional)</label>
-                            <input type="text" class="form-control @error('subject_specialty') is-invalid @enderror" id="subject_specialty" name="subject_specialty" value="{{ old('subject_specialty', $teacher->subject_specialty) }}" placeholder="Contoh: Matematika">
+                            <select class="form-select @error('subject_specialty') is-invalid @enderror" id="subject_specialty" name="subject_specialty">
+                                <option value="">-- Pilih Mata Pelajaran --</option>
+                                @foreach($subjects as $subject)
+                                    <option value="{{ $subject->name }}" {{ old('subject_specialty', $teacher->subject_specialty) == $subject->name ? 'selected' : '' }}>
+                                        {{ $subject->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                             @error('subject_specialty')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

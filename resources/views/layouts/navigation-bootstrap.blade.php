@@ -96,6 +96,15 @@
             <a href="{{ route('calendar.index') }}" class="sidebar-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
                 <i class="bi bi-calendar3"></i> Kalender Akademik
             </a>
+            <a href="{{ route('timetable.settings.index') }}" class="sidebar-link {{ request()->routeIs('timetable.settings.*') ? 'active' : '' }}">
+                <i class="bi bi-clock-history"></i> Pengaturan Jam
+            </a>
+            <a href="{{ route('timetable.rooms.index') }}" class="sidebar-link {{ request()->routeIs('timetable.rooms.*') ? 'active' : '' }}">
+                <i class="bi bi-door-open"></i> Manajemen Ruangan
+            </a>
+            <a href="{{ route('timetable.schedules.create') }}" class="sidebar-link {{ request()->routeIs('timetable.schedules.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar-plus"></i> Input Jadwal
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
@@ -166,6 +175,9 @@
             </a>
 
             <div class="nav-group-title">Akademik</div>
+            <a href="{{ route('timetable.my-schedule') }}" class="sidebar-link {{ request()->routeIs('timetable.my-schedule') ? 'active' : '' }}">
+                <i class="bi bi-calendar-week"></i> Jadwal Mengajar
+            </a>
             <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i> Materi Pembelajaran
             </a>
@@ -199,6 +211,9 @@
         ═══════════════════════════════════════════════════════════ --}}
         @if (Auth::user()->hasRole('Siswa'))
             <div class="nav-group-title">Akademik</div>
+            <a href="{{ route('timetable.my-schedule') }}" class="sidebar-link {{ request()->routeIs('timetable.my-schedule') ? 'active' : '' }}">
+                <i class="bi bi-calendar-week"></i> Jadwal Pelajaran
+            </a>
             <a href="{{ route('admin.lms-materials.index') }}" class="sidebar-link {{ request()->routeIs('admin.lms-materials.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i> Materi Pembelajaran
             </a>

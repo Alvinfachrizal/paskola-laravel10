@@ -59,6 +59,14 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [x] Seeder demo data (5 kategori + 7 event termasuk HUT RI, Idul Fitri, UTS)
 - [x] Dokumentasi `docs/kalender-akademik.md` + panduan integrasi modul Jadwal
 
+### K. Jadwal Pelajaran (Timetable)
+- [x] Skema Database: `academic_days`, `rooms`, `time_slots`, `schedules`
+- [x] API & UI Setting Hari Aktif & Jam Pelajaran (Time Slot) oleh Admin
+- [x] API & UI Manajemen Ruangan (Rooms) oleh Admin
+- [x] API & UI Pembuatan Jadwal Pelajaran (Validasi Anti-Bentrok Guru & Ruangan)
+- [x] Tampilan Grid Jadwal Mingguan untuk Guru
+- [x] Tampilan Grid Jadwal Mingguan untuk Siswa
+
 ### E. Manajemen Nilai & Rapor (Grading)
 - [x] Skema Database: semesters, grade_weights, student_grades, report_cards, grade_change_logs
 - [x] Bobot nilai per komponen per mapel per semester (validasi total 100%)
@@ -140,13 +148,13 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 | H. PPDB Online (inti) | Portal publik, dashboard panitia, daftar ulang, rekap seragam, upload ulang |
 | I. Dashboard Role | Admin, Guru, Siswa, Ortu |
 | J. Kalender Akademik | Grid kalender bulanan, CRUD event, kategori fleksibel, AcademicCalendarService, unit test 5/5 |
+| K. Jadwal Pelajaran (Lengkap) | Skema DB, Setting Hari & Jam, Master Ruangan, Form Input Jadwal + Validasi 3 Lapis, Tampilan Grid Mingguan Guru & Siswa + Integrasi Libur |
 
 ### 🔄 Sprint Berikutnya (Rekomendasi Urutan)
-1. **Jadwal Pelajaran** (Baru — fondasi sebelum Absensi, pakai AcademicCalendarService)
-2. **Kehadiran & Absensi** (Modul D — bergantung pada Jadwal Pelajaran)
-3. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
-4. **Keuangan / SPP** (Modul G)
-5. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
-6. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
+1. **Kehadiran & Absensi** (Modul D — bergantung pada Jadwal Pelajaran)
+2. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
+3. **Keuangan / SPP** (Modul G)
+4. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
+5. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-07-27 setelah Modul Kalender Akademik selesai.)*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-07-31 setelah Modul Jadwal Pelajaran selesai sepenuhnya.)*

@@ -73,7 +73,15 @@
                     </div>
                     <div class="mb-3">
                         <label for="subject_specialty" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">Spesialisasi Mata Pelajaran</label>
-                        <input type="text" class="form-control form-control-lg bg-light border-0 @error('subject_specialty') is-invalid @enderror" id="subject_specialty" name="subject_specialty" value="{{ old('subject_specialty') }}" placeholder="Contoh: Matematika" style="font-size:0.95rem;">
+                        <select class="form-select form-select-lg bg-light border-0 @error('subject_specialty') is-invalid @enderror" id="subject_specialty" name="subject_specialty" style="font-size:0.95rem;">
+                            <option value="">-- Pilih Mata Pelajaran --</option>
+                            @foreach($subjects as $subject)
+                                <option value="{{ $subject->name }}" {{ old('subject_specialty') == $subject->name ? 'selected' : '' }}>
+                                    {{ $subject->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('subject_specialty') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
