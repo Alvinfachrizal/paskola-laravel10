@@ -109,13 +109,13 @@
         </a>
     </div>
     <div class="col-6 col-md-3">
-        <a href="#" class="card border-0 shadow-sm rounded-4 text-center py-3 py-md-4 text-decoration-none transition-hover d-block">
+        <a href="{{ route('grades.input.index') }}" class="card border-0 shadow-sm rounded-4 text-center py-3 py-md-4 text-decoration-none transition-hover d-block">
             <i class="bi bi-journal-text text-primary mb-2 mb-md-3 d-block" style="font-size:1.5rem;"></i>
             <span class="fw-semibold text-dark" style="font-size:0.85rem;">Input Nilai</span>
         </a>
     </div>
     <div class="col-6 col-md-3">
-        <a href="#" class="card border-0 shadow-sm rounded-4 text-center py-3 py-md-4 text-decoration-none transition-hover d-block">
+        <a href="{{ route('finance.bills.index') }}" class="card border-0 shadow-sm rounded-4 text-center py-3 py-md-4 text-decoration-none transition-hover d-block">
             <i class="bi bi-wallet2 text-info mb-2 mb-md-3 d-block" style="font-size:1.5rem;"></i>
             <span class="fw-semibold text-dark" style="font-size:0.85rem;">Tagihan SPP</span>
         </a>
