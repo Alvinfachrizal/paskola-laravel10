@@ -37,15 +37,22 @@ class TeacherController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nip' => 'nullable|string|max:50',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', Rules\Password::defaults()],
-            'gender' => 'required|in:L,P',
-            'phone' => 'nullable|string|max:20',
+            'nip'               => 'nullable|string|max:50',
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|string|email|max:255|unique:users',
+            'password'          => ['required', Rules\Password::defaults()],
+            'gender'            => 'required|in:L,P',
+            'phone'             => 'nullable|string|max:20',
+            'address_ktp'       => 'nullable|string',
+            'address_domicile'  => 'nullable|string',
             'subject_specialty' => 'nullable|string|max:255',
-            'status' => 'required|in:active,inactive,retired',
+            'status'            => 'required|in:active,inactive,retired',
         ]);
+
+        // Jika centang "Alamat domisili sama dengan KTP", salin nilai KTP
+        if ($request->boolean('same_address')) {
+            $validated['address_domicile'] = $validated['address_ktp'];
+        }
         
         $schoolId = $request->user()->school_id;
 
@@ -65,14 +72,16 @@ class TeacherController extends Controller
 
             // Create Teacher
             Teacher::create([
-                'user_id' => $user->id,
-                'school_id' => $schoolId,
-                'nip' => $validated['nip'],
-                'name' => $validated['name'],
-                'gender' => $validated['gender'],
-                'phone' => $validated['phone'],
+                'user_id'          => $user->id,
+                'school_id'        => $schoolId,
+                'nip'              => $validated['nip'],
+                'name'             => $validated['name'],
+                'gender'           => $validated['gender'],
+                'phone'            => $validated['phone'],
+                'address_ktp'      => $validated['address_ktp'] ?? null,
+                'address_domicile' => $validated['address_domicile'] ?? null,
                 'subject_specialty' => $validated['subject_specialty'],
-                'status' => $validated['status'],
+                'status'           => $validated['status'],
             ]);
 
             DB::commit();
@@ -107,15 +116,22 @@ class TeacherController extends Controller
     public function update(Request $request, Teacher $teacher)
     {
         $validated = $request->validate([
-            'nip' => 'nullable|string|max:50',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$teacher->user_id,
-            'password' => ['nullable', Rules\Password::defaults()],
-            'gender' => 'required|in:L,P',
-            'phone' => 'nullable|string|max:20',
+            'nip'               => 'nullable|string|max:50',
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|string|email|max:255|unique:users,email,'.$teacher->user_id,
+            'password'          => ['nullable', Rules\Password::defaults()],
+            'gender'            => 'required|in:L,P',
+            'phone'             => 'nullable|string|max:20',
+            'address_ktp'       => 'nullable|string',
+            'address_domicile'  => 'nullable|string',
             'subject_specialty' => 'nullable|string|max:255',
-            'status' => 'required|in:active,inactive,retired',
+            'status'            => 'required|in:active,inactive,retired',
         ]);
+
+        // Jika centang "Alamat domisili sama dengan KTP", salin nilai KTP
+        if ($request->boolean('same_address')) {
+            $validated['address_domicile'] = $validated['address_ktp'];
+        }
 
         DB::beginTransaction();
         try {
@@ -133,12 +149,14 @@ class TeacherController extends Controller
 
             // Update Teacher
             $teacher->update([
-                'nip' => $validated['nip'],
-                'name' => $validated['name'],
-                'gender' => $validated['gender'],
-                'phone' => $validated['phone'],
+                'nip'              => $validated['nip'],
+                'name'             => $validated['name'],
+                'gender'           => $validated['gender'],
+                'phone'            => $validated['phone'],
+                'address_ktp'      => $validated['address_ktp'] ?? null,
+                'address_domicile' => $validated['address_domicile'] ?? null,
                 'subject_specialty' => $validated['subject_specialty'],
-                'status' => $validated['status'],
+                'status'           => $validated['status'],
             ]);
 
             DB::commit();

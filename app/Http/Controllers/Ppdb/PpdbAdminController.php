@@ -8,6 +8,7 @@ use App\Enums\PpdbReregistrationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\PpdbApplicant;
 use App\Models\PpdbDocument;
+use App\Models\PpdbPayment;
 use App\Models\PpdbReregistration;
 use App\Models\PpdbSelectionScore;
 use App\Models\PpdbUniformOrder;
@@ -255,6 +256,11 @@ class PpdbAdminController extends Controller
                 'entry_year'   => now()->year,
                 'status'       => 'aktif',
             ]);
+
+            // ── 2b. Sambungkan semua ppdb_payments milik pendaftar ini ke student baru ──
+            // Ini memungkinkan modul Keuangan Sekolah melihat riwayat bayar PPDB siswa.
+            PpdbPayment::where('applicant_id', $applicant->id)
+                ->update(['student_id' => $student->id]);
 
             // ── 3. Selesaikan daftar ulang, simpan FK ke student ─────────────
             $applicant->reregistration()->updateOrCreate(

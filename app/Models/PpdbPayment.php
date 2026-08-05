@@ -12,6 +12,7 @@ class PpdbPayment extends Model
 
     protected $fillable = [
         'applicant_id',
+        'student_id',      // Terisi otomatis setelah proses daftar ulang selesai
         'payment_type',
         'amount',
         'status',
@@ -38,5 +39,14 @@ class PpdbPayment extends Model
     public function applicant()
     {
         return $this->belongsTo(PpdbApplicant::class, 'applicant_id');
+    }
+
+    /**
+     * Relasi ke Student — terisi setelah daftar ulang selesai.
+     * Digunakan oleh modul Keuangan untuk melihat riwayat bayar PPDB per siswa.
+     */
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
     }
 }

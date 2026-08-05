@@ -162,9 +162,37 @@
                         <label for="phone" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">No. HP / WhatsApp</label>
                         <input type="text" class="form-control form-control-lg bg-light border-0 @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="081234567890" style="font-size:0.95rem;">
                     </div>
-                    <div>
-                        <label for="address" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">Alamat Lengkap</label>
-                        <textarea class="form-control bg-light border-0 @error('address') is-invalid @enderror" id="address" name="address" rows="3" placeholder="Jl. Sudirman No. 123..." style="font-size:0.95rem; resize:none;">{{ old('address') }}</textarea>
+
+                    {{-- Alamat KTP --}}
+                    <div class="mb-2">
+                        <label for="address_ktp" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">
+                            Alamat KTP <span class="badge bg-secondary rounded-pill ms-1" style="font-size:0.7rem;">Sesuai KTP</span>
+                        </label>
+                        <textarea class="form-control bg-light border-0 @error('address_ktp') is-invalid @enderror"
+                            id="address_ktp" name="address_ktp" rows="3"
+                            placeholder="Jl. Sudirman No. 123, RT 01/RW 02, Kel. Menteng, Kec. Menteng, Jakarta Pusat 10310"
+                            style="font-size:0.95rem; resize:none;">{{ old('address_ktp') }}</textarea>
+                    </div>
+
+                    {{-- Checkbox Sama dengan KTP --}}
+                    <div class="form-check mb-3 ps-1">
+                        <input class="form-check-input ms-1" type="checkbox" id="same_address" name="same_address" value="1"
+                            {{ old('same_address') ? 'checked' : '' }}
+                            onchange="toggleDomicile(this)">
+                        <label class="form-check-label text-muted" for="same_address" style="font-size:0.85rem; cursor:pointer;">
+                            <i class="bi bi-clipboard2-check me-1 text-primary"></i>Alamat domisili <strong>sama</strong> dengan alamat KTP
+                        </label>
+                    </div>
+
+                    {{-- Alamat Domisili --}}
+                    <div id="domicile_section" style="{{ old('same_address') ? 'display:none;' : '' }}">
+                        <label for="address_domicile" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">
+                            Alamat Domisili <span class="badge bg-info text-dark rounded-pill ms-1" style="font-size:0.7rem;">Saat ini tinggal di</span>
+                        </label>
+                        <textarea class="form-control bg-light border-0 @error('address_domicile') is-invalid @enderror"
+                            id="address_domicile" name="address_domicile" rows="3"
+                            placeholder="Jl. Kebon Jeruk No. 45, RT 03/RW 05, Kel. Kebon Jeruk, Jakarta Barat 11530"
+                            style="font-size:0.95rem; resize:none;">{{ old('address_domicile') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -201,4 +229,19 @@
         opacity: 1;
     }
 </style>
+
+<script>
+function toggleDomicile(checkbox) {
+    const section = document.getElementById('domicile_section');
+    if (checkbox.checked) {
+        section.style.display = 'none';
+        // Kosongkan nilai domisili agar tidak mengirim data lama
+        document.getElementById('address_domicile').value = '';
+    } else {
+        section.style.display = '';
+        document.getElementById('address_domicile').focus();
+    }
+}
+</script>
+
 @endsection

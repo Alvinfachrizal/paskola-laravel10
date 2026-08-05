@@ -87,10 +87,18 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [ ] (Opsional) Fitur Chat/Pesan Internal
 
 ### G. Keuangan Sekolah (Finance)
-- [ ] Skema Database Tagihan & Pembayaran
-- [ ] API & UI Manajemen Tagihan (SPP, Uang Gedung, dll)
-- [ ] Integrasi Payment Gateway (Midtrans/Xendit)
-- [ ] Riwayat & Status Pembayaran untuk Dashboard Ortu
+- [x] Skema Database: `bill_types`, `student_bills`, `payments` (+ patch `ppdb_payments.student_id`)
+- [x] Enum: `StudentBillStatus`, `PaymentStatus`
+- [x] Model: `BillType`, `StudentBill`, `Payment` + update relasi `Student`
+- [x] `StudentFinanceService::getFullHistory()` — gabungkan riwayat PPDB + Keuangan
+- [x] Seeder: 5 jenis tagihan demo (SPP, Uang Gedung, Seragam, Komite, Buku)
+- [x] API & UI Manajemen Jenis Tagihan (CRUD BillType oleh Admin)
+- [x] Generate Tagihan Awal Otomatis (StudentObserver saat siswa baru dibuat)
+- [x] Generate Tagihan Berulang SPP (Artisan Command + Windows Task Scheduler)
+- [x] Upload Bukti Bayar (Siswa/Ortu) + Verifikasi Manual (Admin/Bendahara)
+- [x] Dashboard Rekap Keuangan (Admin)
+- [x] Riwayat Keuangan Gabungan per Siswa (PPDB + Finance timeline)
+- [ ] Integrasi Payment Gateway Midtrans/Xendit (opsional, susul belakangan)
 
 ### H. PPDB Online (Penerimaan Siswa Baru)
 - [x] Landing Page Pendaftaran (Portal publik `/ppdb`) — `docs/ppdb.md`
@@ -149,12 +157,13 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 | I. Dashboard Role | Admin, Guru, Siswa, Ortu |
 | J. Kalender Akademik | Grid kalender bulanan, CRUD event, kategori fleksibel, AcademicCalendarService, unit test 5/5 |
 | K. Jadwal Pelajaran (Lengkap) | Skema DB, Setting Hari & Jam, Master Ruangan, Form Input Jadwal + Validasi 3 Lapis, Tampilan Grid Mingguan Guru & Siswa + Integrasi Libur |
+| G. Keuangan (Lengkap) | DB Schema, Enum, Model, StudentFinanceService, Seeder, CRUD Master, Observer awal, Scheduler bulanan, Upload Bukti, Verifikasi Admin, Dashboard Rekap, Riwayat Gabungan |
+| Manajemen Modul (Lengkap) | DB modules+dependencies, Model, ModuleService (cache+validasi dependency), Middleware EnsureModuleActive, Controller, UI toggle card, dokumentasi |
 
 ### 🔄 Sprint Berikutnya (Rekomendasi Urutan)
 1. **Kehadiran & Absensi** (Modul D — bergantung pada Jadwal Pelajaran)
 2. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
-3. **Keuangan / SPP** (Modul G)
-4. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
-5. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
+3. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
+4. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-07-31 setelah Modul Jadwal Pelajaran selesai sepenuhnya.)*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-08-04 setelah Modul Keuangan selesai secara komprehensif (kecuali payment gateway opsional).)*

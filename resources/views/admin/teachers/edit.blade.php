@@ -104,6 +104,41 @@
                         </div>
                     </div>
 
+                    {{-- Alamat --}}
+                    <h5 class="mb-3 mt-4 text-primary border-bottom pb-2">Alamat</h5>
+                    @php
+                        $sameAddr = old('same_address', $teacher->address_ktp && $teacher->address_ktp === $teacher->address_domicile);
+                    @endphp
+
+                    <div class="mb-2">
+                        <label for="address_ktp" class="form-label">
+                            Alamat KTP <span class="badge bg-secondary ms-1" style="font-size:0.7rem;">Sesuai KTP</span>
+                        </label>
+                        <textarea class="form-control @error('address_ktp') is-invalid @enderror"
+                            id="address_ktp" name="address_ktp" rows="3"
+                            placeholder="Jl. Sudirman No. 123, RT 01/RW 02, Kel. Menteng...">{{ old('address_ktp', $teacher->address_ktp) }}</textarea>
+                        @error('address_ktp') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="same_address" name="same_address" value="1"
+                            {{ $sameAddr ? 'checked' : '' }}
+                            onchange="toggleDomicile(this)">
+                        <label class="form-check-label text-muted" for="same_address" style="cursor:pointer;">
+                            <i class="bi bi-clipboard2-check me-1 text-primary"></i>Alamat domisili <strong>sama</strong> dengan alamat KTP
+                        </label>
+                    </div>
+
+                    <div id="domicile_section" style="{{ $sameAddr ? 'display:none;' : '' }}">
+                        <label for="address_domicile" class="form-label">
+                            Alamat Domisili <span class="badge bg-info text-dark ms-1" style="font-size:0.7rem;">Saat ini tinggal di</span>
+                        </label>
+                        <textarea class="form-control @error('address_domicile') is-invalid @enderror"
+                            id="address_domicile" name="address_domicile" rows="3"
+                            placeholder="Jl. Kebon Jeruk No. 45...">{{ old('address_domicile', $teacher->address_domicile) }}</textarea>
+                        @error('address_domicile') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
                     <div class="d-grid mt-4">
                         <button type="submit" class="btn btn-primary">Update Data Guru</button>
                     </div>
@@ -112,4 +147,18 @@
         </div>
     </div>
 </div>
+
+<script>
+function toggleDomicile(checkbox) {
+    const section = document.getElementById('domicile_section');
+    if (checkbox.checked) {
+        section.style.display = 'none';
+        document.getElementById('address_domicile').value = '';
+    } else {
+        section.style.display = '';
+        document.getElementById('address_domicile').focus();
+    }
+}
+</script>
+
 @endsection

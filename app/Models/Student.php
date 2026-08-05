@@ -57,4 +57,29 @@ class Student extends Model
                     ->withPivot('school_year_id', 'roll_number', 'is_active')
                     ->withTimestamps();
     }
+
+    /**
+     * Semua tagihan sekolah siswa ini (SPP, uang gedung, dll).
+     */
+    public function bills()
+    {
+        return $this->hasMany(StudentBill::class);
+    }
+
+    /**
+     * Tagihan yang belum lunas.
+     */
+    public function activeBills()
+    {
+        return $this->bills()->whereNotIn('status', ['lunas'])->orderBy('due_date');
+    }
+
+    /**
+     * Riwayat pembayaran PPDB (biaya pendaftaran & daftar ulang).
+     * Tersambung setelah proses daftar ulang PPDB selesai.
+     */
+    public function ppdbPayments()
+    {
+        return $this->hasMany(PpdbPayment::class);
+    }
 }

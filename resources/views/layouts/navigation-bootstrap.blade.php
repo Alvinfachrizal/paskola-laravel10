@@ -1,4 +1,5 @@
 <aside id="sidebar">
+    @php $moduleStatus = \App\Services\ModuleService::getStatus(); @endphp
     <div class="p-4 d-flex align-items-center gap-3 border-bottom">
         <div class="bg-primary text-white rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
             <i class="bi bi-shield-lock-fill fs-5"></i>
@@ -116,18 +117,33 @@
             </a>
 
             <div class="nav-group-title">Lainnya</div>
+            @if($moduleStatus['ppdb'] ?? true)
             <a href="{{ route('admin.ppdb.index') }}" class="sidebar-link {{ request()->routeIs('admin.ppdb.*') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-check"></i> PPDB Online
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-wallet2"></i> Keuangan
+            @endif
+            @if($moduleStatus['keuangan_sekolah'] ?? true)
+            <a href="{{ route('finance.bill-types.index') }}" class="sidebar-link {{ request()->routeIs('finance.bill-types.*') ? 'active' : '' }}">
+                <i class="bi bi-tags"></i> Jenis Tagihan
             </a>
+            <a href="{{ route('finance.reports.index') }}" class="sidebar-link {{ request()->routeIs('finance.reports.*') ? 'active' : '' }}">
+                <i class="bi bi-graph-up-arrow"></i> Rekap Keuangan
+            </a>
+            <a href="{{ route('finance.bills.index') }}" class="sidebar-link {{ request()->routeIs('finance.bills.*') ? 'active' : '' }}">
+                <i class="bi bi-wallet2"></i> Tagihan Siswa
+            </a>
+            <a href="{{ route('finance.payments.index') }}" class="sidebar-link {{ request()->routeIs('finance.payments.*') ? 'active' : '' }}">
+                <i class="bi bi-cash-coin"></i> Verifikasi Bayar
+            </a>
+            @endif
             <a href="#" class="sidebar-link">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-gear"></i> Pengaturan
+            @if(Auth::user()->hasRole('Super Admin'))
+            <a href="{{ route('settings.modules.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                <i class="bi bi-gear"></i> Pengaturan Modul
             </a>
+            @endif
         @endif
 
         {{-- ═══════════════════════════════════════════════════════════
@@ -234,6 +250,9 @@
             </a>
 
             <div class="nav-group-title">Lainnya</div>
+            <a href="{{ route('finance.bills.index') }}" class="sidebar-link {{ request()->routeIs('finance.bills.*') ? 'active' : '' }}">
+                <i class="bi bi-wallet2"></i> Tagihan & Pembayaran
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
@@ -255,6 +274,9 @@
             </a>
 
             <div class="nav-group-title">Lainnya</div>
+            <a href="{{ route('finance.bills.index') }}" class="sidebar-link {{ request()->routeIs('finance.bills.*') ? 'active' : '' }}">
+                <i class="bi bi-wallet2"></i> Tagihan & Pembayaran
+            </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>

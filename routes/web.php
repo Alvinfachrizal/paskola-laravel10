@@ -153,8 +153,38 @@ Route::middleware(['role:Super Admin|Admin|Kepala Sekolah'])->prefix('timetable'
 
 
 
+// ─── MODUL KEUANGAN SEKOLAH ────────────────────────────────────────────────
+Route::middleware(['auth', 'module.active:keuangan_sekolah'])->prefix('keuangan')->name('finance.')->group(function () {
+
+    // Manajemen Jenis Tagihan (Master Data)
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah'])->prefix('jenis-tagihan')->name('bill-types.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Finance\BillTypeController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Finance\BillTypeController::class, 'store'])->name('store');
+        Route::put('/{billType}', [\App\Http\Controllers\Finance\BillTypeController::class, 'update'])->name('update');
+        Route::delete('/{billType}', [\App\Http\Controllers\Finance\BillTypeController::class, 'destroy'])->name('destroy');
+        Route::patch('/{billType}/toggle', [\App\Http\Controllers\Finance\BillTypeController::class, 'toggleActive'])->name('toggle');
+    });
+
+    // Tagihan & Upload Bukti (Admin melihat semua, Siswa melihat miliknya)
+    Route::get('tagihan', [\App\Http\Controllers\Finance\StudentBillController::class, 'index'])->name('bills.index');
+    Route::get('tagihan/{bill}', [\App\Http\Controllers\Finance\StudentBillController::class, 'show'])->name('bills.show');
+    Route::post('tagihan/{bill}/bayar', [\App\Http\Controllers\Finance\PaymentController::class, 'store'])->name('payments.store');
+
+    // Verifikasi Pembayaran (Admin)
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah'])->group(function () {
+        Route::get('pembayaran', [\App\Http\Controllers\Finance\PaymentController::class, 'index'])->name('payments.index');
+        Route::post('pembayaran/{payment}/verifikasi', [\App\Http\Controllers\Finance\PaymentController::class, 'verify'])->name('payments.verify');
+
+        // Dashboard Rekap Keuangan
+        Route::get('rekap', [\App\Http\Controllers\Finance\FinanceReportController::class, 'index'])->name('reports.index');
+
+        // Riwayat Keuangan Gabungan Per Siswa
+        Route::get('riwayat/{student}', [\App\Http\Controllers\Finance\StudentFinanceController::class, 'show'])->name('history.show');
+    });
+});
+
 // ─── PPDB Publik (tidak butuh login) ───────────────────────────────────────
-Route::prefix('ppdb')->name('ppdb.')->group(function () {
+Route::middleware(['module.active:ppdb'])->prefix('ppdb')->name('ppdb.')->group(function () {
     // Landing page portal PPDB
     Route::get('/', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'index'])->name('index');
 
@@ -178,7 +208,7 @@ Route::prefix('ppdb')->name('ppdb.')->group(function () {
 });
 
 // ─── PPDB Admin Panel (hanya Admin & Super Admin) ──────────────────────────
-Route::prefix('admin/ppdb')->name('admin.ppdb.')->middleware(['auth', 'role:Super Admin|Admin'])->group(function () {
+Route::prefix('admin/ppdb')->name('admin.ppdb.')->middleware(['auth', 'role:Super Admin|Admin', 'module.active:ppdb'])->group(function () {
     Route::get('/', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'index'])->name('index');
     Route::get('/gelombang', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'waves'])->name('waves');
     Route::post('/gelombang', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'storeWave'])->name('waves.store');
@@ -197,6 +227,17 @@ Route::prefix('admin/ppdb')->name('admin.ppdb.')->middleware(['auth', 'role:Supe
 
     // Rekap kebutuhan seragam
     Route::get('/rekap-seragam', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'uniformRecap'])->name('uniform-recap');
+});
+
+// ─── Halaman: Modul Nonaktif ────────────────────────────────────────────────
+Route::get('/modul-nonaktif', function () {
+    return view('settings.modules.disabled');
+})->middleware('auth')->name('module.disabled');
+
+// ─── SETTINGS (Superadmin only) ──────────────────────────────────────────────
+Route::middleware(['auth', 'role:Super Admin'])->prefix('settings')->name('settings.')->group(function () {
+    Route::get('modules', [\App\Http\Controllers\Settings\ModuleController::class, 'index'])->name('modules.index');
+    Route::post('modules/{module}/toggle', [\App\Http\Controllers\Settings\ModuleController::class, 'toggle'])->name('modules.toggle');
 });
 
 require __DIR__.'/auth.php';

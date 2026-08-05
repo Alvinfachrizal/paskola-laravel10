@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Generate tagihan berulang (misal: SPP) setiap tanggal 1 jam 00:00
+        $schedule->command('bills:generate-monthly')->monthlyOn(1, '00:00');
     }
 
     /**
