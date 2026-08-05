@@ -159,6 +159,11 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
                                                 <li><a class="dropdown-item" href="{{ route('admin.teachers.edit', $teacher->id) }}"><i class="bi bi-pencil me-2 text-primary"></i>Edit Data</a></li>
+                                                <li>
+                                                    <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#attachModal{{ $teacher->id }}">
+                                                        <i class="bi bi-paperclip me-2 text-info"></i>Lihat Lampiran
+                                                    </a>
+                                                </li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
                                                     <form action="{{ route('admin.teachers.destroy', $teacher->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus guru ini beserta akun penggunanya?');">
@@ -171,6 +176,60 @@
                                         </div>
                                     </td>
                                 </tr>
+                                
+                                <!-- Modal Lampiran -->
+                                <div class="modal fade" id="attachModal{{ $teacher->id }}" tabindex="-1" aria-labelledby="attachModalLabel{{ $teacher->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content border-0 shadow-sm rounded-4">
+                                            <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
+                                                <h5 class="modal-title fw-bold" id="attachModalLabel{{ $teacher->id }}">Dokumen Lampiran</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body px-4 pb-4">
+                                                <p class="text-muted mb-4" style="font-size:0.875rem;">Lampiran dokumen untuk <strong>{{ $teacher->name }}</strong></p>
+                                                
+                                                <div class="list-group list-group-flush border-top border-bottom">
+                                                    @php
+                                                        $docs = [
+                                                            'doc_ijazah_sd' => 'Ijazah SD',
+                                                            'doc_ijazah_smp' => 'Ijazah SMP',
+                                                            'doc_ijazah_sma' => 'Ijazah SMA',
+                                                            'doc_ijazah_s1' => 'Ijazah S1',
+                                                            'doc_npwp' => 'NPWP'
+                                                        ];
+                                                    @endphp
+                                                    
+                                                    @foreach($docs as $field => $label)
+                                                        <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <i class="bi bi-file-earmark-text text-secondary me-2"></i>
+                                                                <span class="fw-medium text-dark">{{ $label }}</span>
+                                                            </div>
+                                                            <div>
+                                                                @if($teacher->$field)
+                                                                    <div class="btn-group">
+                                                                        <a href="{{ Storage::url($teacher->$field) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-start-pill px-3" title="Lihat Dokumen">
+                                                                            <i class="bi bi-eye me-1"></i> Lihat
+                                                                        </a>
+                                                                        <a href="{{ Storage::url($teacher->$field) }}" download="{{ $teacher->name }} - {{ $label }}.{{ pathinfo($teacher->$field, PATHINFO_EXTENSION) }}" class="btn btn-sm btn-primary rounded-end-pill px-3" title="Download Dokumen">
+                                                                            <i class="bi bi-download"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                @else
+                                                                    <span class="badge bg-light text-muted border">Kosong</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-top-0 px-4 pb-4 pt-0">
+                                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             @empty
                                 <tr>
                                     <td colspan="6" class="text-center py-5">

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 
 class TeacherController extends Controller
@@ -43,10 +44,15 @@ class TeacherController extends Controller
             'password'          => ['required', Rules\Password::defaults()],
             'gender'            => 'required|in:L,P',
             'phone'             => 'nullable|string|max:20',
-            'address_ktp'       => 'nullable|string',
+            'address_ktp'       => 'required|string',
             'address_domicile'  => 'nullable|string',
             'subject_specialty' => 'nullable|string|max:255',
             'status'            => 'required|in:active,inactive,retired',
+            'doc_ijazah_sd'     => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_ijazah_smp'    => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_ijazah_sma'    => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_ijazah_s1'     => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_npwp'          => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
         ]);
 
         // Jika centang "Alamat domisili sama dengan KTP", salin nilai KTP
@@ -70,8 +76,18 @@ class TeacherController extends Controller
             ]);
             $user->assignRole('Guru');
 
+            $docData = [];
+            $docs = ['doc_ijazah_sd', 'doc_ijazah_smp', 'doc_ijazah_sma', 'doc_ijazah_s1', 'doc_npwp'];
+            foreach ($docs as $doc) {
+                if ($request->hasFile($doc)) {
+                    $docData[$doc] = $request->file($doc)->store('teachers/documents', 'public');
+                } else {
+                    $docData[$doc] = null;
+                }
+            }
+
             // Create Teacher
-            Teacher::create([
+            Teacher::create(array_merge([
                 'user_id'          => $user->id,
                 'school_id'        => $schoolId,
                 'nip'              => $validated['nip'],
@@ -82,7 +98,7 @@ class TeacherController extends Controller
                 'address_domicile' => $validated['address_domicile'] ?? null,
                 'subject_specialty' => $validated['subject_specialty'],
                 'status'           => $validated['status'],
-            ]);
+            ], $docData));
 
             DB::commit();
             return redirect()->route('admin.teachers.index')->with('success', 'Data Guru berhasil ditambahkan.');
@@ -122,10 +138,15 @@ class TeacherController extends Controller
             'password'          => ['nullable', Rules\Password::defaults()],
             'gender'            => 'required|in:L,P',
             'phone'             => 'nullable|string|max:20',
-            'address_ktp'       => 'nullable|string',
+            'address_ktp'       => 'required|string',
             'address_domicile'  => 'nullable|string',
             'subject_specialty' => 'nullable|string|max:255',
             'status'            => 'required|in:active,inactive,retired',
+            'doc_ijazah_sd'     => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_ijazah_smp'    => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_ijazah_sma'    => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_ijazah_s1'     => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
+            'doc_npwp'          => 'nullable|file|mimes:pdf,jpg,jpeg|max:2048',
         ]);
 
         // Jika centang "Alamat domisili sama dengan KTP", salin nilai KTP
@@ -147,8 +168,20 @@ class TeacherController extends Controller
             }
             $teacher->user->update($userData);
 
+            $docData = [];
+            $docs = ['doc_ijazah_sd', 'doc_ijazah_smp', 'doc_ijazah_sma', 'doc_ijazah_s1', 'doc_npwp'];
+            foreach ($docs as $doc) {
+                if ($request->hasFile($doc)) {
+                    // Delete old file if exists
+                    if ($teacher->$doc) {
+                        Storage::disk('public')->delete($teacher->$doc);
+                    }
+                    $docData[$doc] = $request->file($doc)->store('teachers/documents', 'public');
+                }
+            }
+
             // Update Teacher
-            $teacher->update([
+            $teacher->update(array_merge([
                 'nip'              => $validated['nip'],
                 'name'             => $validated['name'],
                 'gender'           => $validated['gender'],
@@ -157,7 +190,7 @@ class TeacherController extends Controller
                 'address_domicile' => $validated['address_domicile'] ?? null,
                 'subject_specialty' => $validated['subject_specialty'],
                 'status'           => $validated['status'],
-            ]);
+            ], $docData));
 
             DB::commit();
             return redirect()->route('admin.teachers.index')->with('success', 'Data Guru berhasil diperbarui.');
@@ -175,6 +208,15 @@ class TeacherController extends Controller
         DB::beginTransaction();
         try {
             $user = $teacher->user;
+            
+            // Hapus file dokumen jika ada
+            $docs = ['doc_ijazah_sd', 'doc_ijazah_smp', 'doc_ijazah_sma', 'doc_ijazah_s1', 'doc_npwp'];
+            foreach ($docs as $doc) {
+                if ($teacher->$doc) {
+                    Storage::disk('public')->delete($teacher->$doc);
+                }
+            }
+
             $teacher->delete();
             if ($user) {
                 $user->delete();

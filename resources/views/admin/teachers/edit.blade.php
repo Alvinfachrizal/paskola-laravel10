@@ -15,7 +15,7 @@
     <div class="col-md-10 offset-md-1">
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <form action="{{ route('admin.teachers.update', $teacher->id) }}" method="POST">
+                <form action="{{ route('admin.teachers.update', $teacher->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
@@ -112,10 +112,10 @@
 
                     <div class="mb-2">
                         <label for="address_ktp" class="form-label">
-                            Alamat KTP <span class="badge bg-secondary ms-1" style="font-size:0.7rem;">Sesuai KTP</span>
+                            Alamat KTP <span class="text-danger">*</span> <span class="badge bg-secondary ms-1" style="font-size:0.7rem;">Sesuai KTP</span>
                         </label>
                         <textarea class="form-control @error('address_ktp') is-invalid @enderror"
-                            id="address_ktp" name="address_ktp" rows="3"
+                            id="address_ktp" name="address_ktp" rows="3" required
                             placeholder="Jl. Sudirman No. 123, RT 01/RW 02, Kel. Menteng...">{{ old('address_ktp', $teacher->address_ktp) }}</textarea>
                         @error('address_ktp') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
@@ -137,6 +137,35 @@
                             id="address_domicile" name="address_domicile" rows="3"
                             placeholder="Jl. Kebon Jeruk No. 45...">{{ old('address_domicile', $teacher->address_domicile) }}</textarea>
                         @error('address_domicile') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <h5 class="mb-3 mt-4 text-primary border-bottom pb-2">Dokumen Lampiran</h5>
+                    <p class="text-muted mb-3" style="font-size:0.85rem;">Format PDF/JPG (Max 2MB). Kosongkan jika tidak ingin mengubah dokumen yang sudah ada.</p>
+                    
+                    <div class="row">
+                        @php
+                            $docs = [
+                                'doc_ijazah_sd' => 'Ijazah SD',
+                                'doc_ijazah_smp' => 'Ijazah SMP',
+                                'doc_ijazah_sma' => 'Ijazah SMA',
+                                'doc_ijazah_s1' => 'Ijazah S1',
+                                'doc_npwp' => 'NPWP'
+                            ];
+                        @endphp
+                        
+                        @foreach($docs as $field => $label)
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ $field }}" class="form-label">{{ $label }}</label>
+                            @if($teacher->$field)
+                                <div class="mb-1 d-flex gap-1">
+                                    <a href="{{ Storage::url($teacher->$field) }}" target="_blank" class="badge bg-success text-decoration-none py-1 px-2"><i class="bi bi-eye"></i> Lihat {{ $label }} Saat Ini</a>
+                                    <a href="{{ Storage::url($teacher->$field) }}" download="{{ $teacher->name }} - {{ $label }}.{{ pathinfo($teacher->$field, PATHINFO_EXTENSION) }}" class="badge bg-primary text-decoration-none py-1 px-2" title="Download"><i class="bi bi-download"></i> Download</a>
+                                </div>
+                            @endif
+                            <input class="form-control form-control-sm @error($field) is-invalid @enderror" type="file" id="{{ $field }}" name="{{ $field }}" accept=".pdf,.jpg,.jpeg">
+                            @error($field) <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        @endforeach
                     </div>
 
                     <div class="d-grid mt-4">

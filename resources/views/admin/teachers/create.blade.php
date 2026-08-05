@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('admin.teachers.store') }}" method="POST">
+<form action="{{ route('admin.teachers.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     
     <div class="row g-4">
@@ -166,10 +166,10 @@
                     {{-- Alamat KTP --}}
                     <div class="mb-2">
                         <label for="address_ktp" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">
-                            Alamat KTP <span class="badge bg-secondary rounded-pill ms-1" style="font-size:0.7rem;">Sesuai KTP</span>
+                            Alamat KTP <span class="text-danger">*</span> <span class="badge bg-secondary rounded-pill ms-1" style="font-size:0.7rem;">Sesuai KTP</span>
                         </label>
                         <textarea class="form-control bg-light border-0 @error('address_ktp') is-invalid @enderror"
-                            id="address_ktp" name="address_ktp" rows="3"
+                            id="address_ktp" name="address_ktp" rows="3" required
                             placeholder="Jl. Sudirman No. 123, RT 01/RW 02, Kel. Menteng, Kec. Menteng, Jakarta Pusat 10310"
                             style="font-size:0.95rem; resize:none;">{{ old('address_ktp') }}</textarea>
                     </div>
@@ -195,8 +195,47 @@
                             style="font-size:0.95rem; resize:none;">{{ old('address_domicile') }}</textarea>
                     </div>
                 </div>
-            </div>
+        </div>
 
+        <!-- Kolom Dokumen (Bawah) -->
+        <div class="col-12 mt-0">
+            <!-- Card 5: Dokumen Lampiran -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-dark mb-0" style="font-size:1.1rem;">Dokumen Lampiran</h5>
+                    <p class="text-muted mb-3" style="font-size:0.85rem;">Format PDF/JPG (Max 2MB)</p>
+                    <hr class="mt-0 mb-4 bg-light">
+                </div>
+                <div class="card-body px-4 pb-4 pt-0">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4">
+                            <label for="doc_ijazah_sd" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">Ijazah SD</label>
+                            <input class="form-control form-control-sm bg-light border-0 @error('doc_ijazah_sd') is-invalid @enderror" type="file" id="doc_ijazah_sd" name="doc_ijazah_sd" accept=".pdf,.jpg,.jpeg">
+                            @error('doc_ijazah_sd') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <label for="doc_ijazah_smp" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">Ijazah SMP</label>
+                            <input class="form-control form-control-sm bg-light border-0 @error('doc_ijazah_smp') is-invalid @enderror" type="file" id="doc_ijazah_smp" name="doc_ijazah_smp" accept=".pdf,.jpg,.jpeg">
+                            @error('doc_ijazah_smp') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <label for="doc_ijazah_sma" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">Ijazah SMA</label>
+                            <input class="form-control form-control-sm bg-light border-0 @error('doc_ijazah_sma') is-invalid @enderror" type="file" id="doc_ijazah_sma" name="doc_ijazah_sma" accept=".pdf,.jpg,.jpeg">
+                            @error('doc_ijazah_sma') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <label for="doc_ijazah_s1" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">Ijazah S1</label>
+                            <input class="form-control form-control-sm bg-light border-0 @error('doc_ijazah_s1') is-invalid @enderror" type="file" id="doc_ijazah_s1" name="doc_ijazah_s1" accept=".pdf,.jpg,.jpeg">
+                            @error('doc_ijazah_s1') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <label for="doc_npwp" class="form-label text-muted fw-semibold" style="font-size:0.85rem;">NPWP</label>
+                            <input class="form-control form-control-sm bg-light border-0 @error('doc_npwp') is-invalid @enderror" type="file" id="doc_npwp" name="doc_npwp" accept=".pdf,.jpg,.jpeg">
+                            @error('doc_npwp') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     

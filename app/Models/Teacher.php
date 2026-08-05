@@ -28,6 +28,11 @@ class Teacher extends Model
         'employment_type',
         'join_date',
         'status',
+        'doc_ijazah_sd',
+        'doc_ijazah_smp',
+        'doc_ijazah_sma',
+        'doc_ijazah_s1',
+        'doc_npwp',
     ];
 
     protected $casts = [
