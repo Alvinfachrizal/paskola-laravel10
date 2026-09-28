@@ -86,6 +86,19 @@ class RoleAndUserSeeder extends Seeder
         );
         $guru->assignRole('Guru');
 
+        // create kepala sekolah
+        $kepsek = User::firstOrCreate(
+            ['email' => 'kepsek@paskola.com'],
+            [
+                'name' => 'Kepala Sekolah',
+                'password' => Hash::make('password123'),
+                'school_id' => $school->id,
+                'role' => 'Kepala Sekolah',
+                'email_verified_at' => now(),
+            ]
+        );
+        $kepsek->assignRole('Kepala Sekolah');
+
         // create siswa
         $siswa = User::firstOrCreate(
             ['email' => 'siswa@paskola.com'],
@@ -98,5 +111,18 @@ class RoleAndUserSeeder extends Seeder
             ]
         );
         $siswa->assignRole('Siswa');
+
+        // create ortu
+        $ortu = User::firstOrCreate(
+            ['email' => 'ortu@paskola.com'],
+            [
+                'name' => 'Orang Tua Siswa',
+                'password' => Hash::make('password123'),
+                'school_id' => $school->id,
+                'role' => 'Ortu',
+                'email_verified_at' => now(),
+            ]
+        );
+        $ortu->assignRole('Ortu');
     }
 }

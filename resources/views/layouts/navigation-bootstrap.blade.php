@@ -109,6 +109,12 @@
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
+            <a href="{{ route('exam.questions.index') }}" class="sidebar-link {{ request()->routeIs('exam.questions.*') ? 'active' : '' }}">
+                <i class="bi bi-patch-question"></i> Bank Soal
+            </a>
+            <a href="{{ route('exam.exams.index') }}" class="sidebar-link {{ request()->routeIs('exam.exams.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-text"></i> Ujian Online
+            </a>
             <a href="{{ route('grades.input.index') }}" class="sidebar-link {{ request()->routeIs('grades.input.*', 'grades.weights.*') ? 'active' : '' }}">
                 <i class="bi bi-pencil-square"></i> Input Nilai
             </a>
@@ -171,6 +177,9 @@
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
+            <a href="{{ route('exam.exams.index') }}" class="sidebar-link {{ request()->routeIs('exam.exams.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-text"></i> Ujian Online
+            </a>
             <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
                 <i class="bi bi-star"></i> Nilai & Rapor
             </a>
@@ -209,6 +218,12 @@
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
             </a>
+            <a href="{{ route('exam.questions.index') }}" class="sidebar-link {{ request()->routeIs('exam.questions.*') ? 'active' : '' }}">
+                <i class="bi bi-patch-question"></i> Bank Soal
+            </a>
+            <a href="{{ route('exam.exams.index') }}" class="sidebar-link {{ request()->routeIs('exam.exams.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-text"></i> Ujian Online
+            </a>
             <a href="{{ route('grades.input.index') }}" class="sidebar-link {{ request()->routeIs('grades.input.*', 'grades.weights.*') ? 'active' : '' }}">
                 <i class="bi bi-pencil-square"></i> Input Nilai
             </a>
@@ -244,6 +259,9 @@
             </a>
             <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar-check"></i> Absensi
+            </a>
+            <a href="{{ route('exam.session.my-exams') }}" class="sidebar-link {{ request()->routeIs('exam.session.*') ? 'active' : '' }}">
+                <i class="bi bi-pencil-fill"></i> Ujian Saya
             </a>
             <a href="{{ route('grades.report-cards.index') }}" class="sidebar-link {{ request()->routeIs('grades.report-cards.*') ? 'active' : '' }}">
                 <i class="bi bi-star"></i> Rapor Nilai
