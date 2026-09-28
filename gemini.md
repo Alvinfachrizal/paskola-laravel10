@@ -159,11 +159,13 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 | K. Jadwal Pelajaran (Lengkap) | Skema DB, Setting Hari & Jam, Master Ruangan, Form Input Jadwal + Validasi 3 Lapis, Tampilan Grid Mingguan Guru & Siswa + Integrasi Libur |
 | G. Keuangan (Lengkap) | DB Schema, Enum, Model, StudentFinanceService, Seeder, CRUD Master, Observer awal, Scheduler bulanan, Upload Bukti, Verifikasi Admin, Dashboard Rekap, Riwayat Gabungan |
 | Manajemen Modul (Lengkap) | DB modules+dependencies, Model, ModuleService (cache+validasi dependency), Middleware EnsureModuleActive, Controller, UI toggle card, dokumentasi |
+| L. Ujian Online (Pilihan Ganda) | Bank soal, Manajemen Ujian (jadwal/durasi), Pengacakan soal per siswa, Sesi ujian (autosave, timer server-side), Penilaian, Approval hasil, Ujian susulan |
 
 ### 🔄 Sprint Berikutnya (Rekomendasi Urutan)
 1. **Kehadiran & Absensi** (Modul D — bergantung pada Jadwal Pelajaran)
 2. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
 3. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
 4. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
+5. **Kalkulasi Nilai Final Rapor** (Sinkronisasi nilai ujian online ke modul Grading)
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-08-04 setelah Modul Keuangan selesai secara komprehensif (kecuali payment gateway opsional).)*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-09-28 setelah Modul Ujian Online selesai.)*

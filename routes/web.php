@@ -240,4 +240,41 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('settings')->name('setti
     Route::post('modules/{module}/toggle', [\App\Http\Controllers\Settings\ModuleController::class, 'toggle'])->name('modules.toggle');
 });
 
+// ─── MODUL UJIAN ONLINE ──────────────────────────────────────────────────────
+Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
+
+    // ── Bank Soal: Guru (CRUD) + Admin/Kepsek (read-only via policy) ──────
+    Route::resource('questions', \App\Http\Controllers\Exam\QuestionController::class);
+
+    // ── Ujian (Exam): Guru CRUD, Admin/Kepsek read-only ──────────────────
+    Route::resource('exams', \App\Http\Controllers\Exam\ExamController::class);
+
+    // Aksi tambahan pada ujian (publish, sinkronkan peserta, buka susulan)
+    Route::middleware(['role:Guru'])->group(function () {
+        Route::post('exams/{exam}/publish',           [\App\Http\Controllers\Exam\ExamController::class, 'publish'])->name('exams.publish');
+        Route::post('exams/{exam}/sync-participants', [\App\Http\Controllers\Exam\ExamController::class, 'syncParticipants'])->name('exams.sync-participants');
+        Route::get('exams/{exam}/participants',       [\App\Http\Controllers\Exam\ExamController::class, 'participants'])->name('exams.participants');
+        Route::get('exams/{exam}/results',            [\App\Http\Controllers\Exam\ExamController::class, 'results'])->name('exams.results');
+        Route::post('exams/{exam}/approve',           [\App\Http\Controllers\Exam\ExamController::class, 'approve'])->name('exams.approve');
+        Route::post('exams/{exam}/makeup',            [\App\Http\Controllers\Exam\ExamController::class, 'openMakeup'])->name('exams.makeup');
+        Route::get('exams/{exam}/participants/{participant}/detail', [\App\Http\Controllers\Exam\ExamController::class, 'participantDetail'])->name('exams.participant-detail');
+    });
+
+    // ── Sesi Ujian Siswa ──────────────────────────────────────────────────
+    // Daftar ujian & input kode: semua role yang login
+    Route::middleware(['role:Siswa'])->group(function () {
+        Route::get('my-exams',         [\App\Http\Controllers\Exam\ExamSessionController::class, 'myExams'])->name('session.my-exams');
+        Route::get('enter',            [\App\Http\Controllers\Exam\ExamSessionController::class, 'showEnterCode'])->name('session.enter');
+        Route::post('enter',           [\App\Http\Controllers\Exam\ExamSessionController::class, 'enterCode'])->name('session.enter.submit');
+        Route::get('session/{participant}',   [\App\Http\Controllers\Exam\ExamSessionController::class, 'show'])->name('session.show');
+        Route::get('session/{participant}/result', [\App\Http\Controllers\Exam\ExamSessionController::class, 'result'])->name('session.result');
+
+        // AJAX endpoints (autosave & submit)
+        Route::post('session/{participant}/answer', [\App\Http\Controllers\Exam\ExamSessionController::class, 'saveAnswer'])->name('session.answer');
+        Route::post('session/{participant}/submit', [\App\Http\Controllers\Exam\ExamSessionController::class, 'submit'])->name('session.submit');
+        Route::get('session/{participant}/time',    [\App\Http\Controllers\Exam\ExamSessionController::class, 'getTime'])->name('session.time');
+    });
+});
+
 require __DIR__.'/auth.php';
+
