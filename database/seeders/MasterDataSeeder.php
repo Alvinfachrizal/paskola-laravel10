@@ -206,7 +206,7 @@ class MasterDataSeeder extends Seeder
                         'nisn'        => '00' . $nis,
                         'birth_date'  => now()->subYears(16)->subDays(rand(1, 365)),
                         'gender'      => $i % 2 === 0 ? 'P' : 'L',
-                        'status'      => 'aktif',
+                        'status'      => 'active',
                         'entry_year'  => 2025,
                     ]
                 );
@@ -230,7 +230,7 @@ class MasterDataSeeder extends Seeder
         $oldSiswa->syncRoles(['Siswa']);
         $oldStudent = Student::firstOrCreate(
             ['user_id' => $oldSiswa->id],
-            ['school_id' => $school->id, 'name' => 'Andi Siswa', 'nis' => '20249999', 'nisn' => '0020249999', 'birth_date' => now()->subYears(16), 'gender' => 'L', 'status' => 'aktif']
+            ['school_id' => $school->id, 'name' => 'Andi Siswa', 'nis' => '20249999', 'nisn' => '0020249999', 'birth_date' => now()->subYears(16), 'gender' => 'L', 'status' => 'active']
         );
         $allStudents[] = $oldStudent;
 

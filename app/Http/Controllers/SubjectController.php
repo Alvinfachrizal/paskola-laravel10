@@ -13,7 +13,16 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         $schoolId = $request->user()->school_id;
-        $subjects = Subject::where('school_id', $schoolId)->orderBy('name')->get();
+        $query = Subject::where('school_id', $schoolId)->orderBy('name');
+        
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+        
+        $subjects = $query->paginate(15)->withQueryString();
         return view('admin.subjects.index', compact('subjects'));
     }
 

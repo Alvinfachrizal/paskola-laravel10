@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('photo_url')->nullable();
             $table->integer('entry_year')->nullable();
-            $table->string('status')->default('aktif');
+            $table->string('status')->default('active');
             $table->string('parent_name')->nullable();
             $table->string('parent_phone')->nullable();
             $table->string('parent_job')->nullable();

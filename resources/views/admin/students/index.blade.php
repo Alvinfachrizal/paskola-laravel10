@@ -91,7 +91,7 @@
             </div>
             <select name="status" class="form-select" style="width: 200px; border-radius: 8px;" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
-                <option value="aktif"    {{ request('status') == 'aktif'       ? 'selected' : '' }}>Aktif</option>
+                <option value="active"    {{ request('status') == 'active'       ? 'selected' : '' }}>Aktif</option>
                 <option value="graduated" {{ request('status') == 'graduated'  ? 'selected' : '' }}>Lulus</option>
                 <option value="inactive" {{ request('status') == 'inactive'    ? 'selected' : '' }}>Nonaktif</option>
                 <option value="dropped_out" {{ request('status') == 'dropped_out' ? 'selected' : '' }}>Dikeluarkan</option>

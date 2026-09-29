@@ -42,21 +42,27 @@
             
             <div class="card-body px-4 pb-4 pt-4">
                 <!-- Filter Row -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-9">
+                <form method="GET" action="{{ route('admin.subjects.index') }}" class="row g-3 mb-4">
+                    <div class="col-md-7">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3 text-muted">
                                 <i class="bi bi-search"></i>
                             </span>
-                            <input type="text" class="form-control bg-white border-start-0 py-2 rounded-end-pill" placeholder="Cari nama atau kode mapel..." style="font-size:0.875rem;">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-white border-start-0 py-2 rounded-end-pill" placeholder="Cari nama atau kode mapel..." style="font-size:0.875rem;" autocomplete="off">
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-light btn-sm rounded-pill w-100 py-2" style="font-size:0.875rem;">Cari</button>
+                    </div>
                     <div class="col-md-3 mt-3 mt-md-0 d-grid d-md-flex justify-content-md-end align-items-center">
+                        @if(request('search'))
+                            <a href="{{ route('admin.subjects.index') }}" class="btn btn-light btn-sm rounded-pill px-3 py-2 me-2 text-muted" style="font-size:0.875rem;">Reset</a>
+                        @endif
                         <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 py-2 shadow-sm transition-hover fw-medium d-flex align-items-center justify-content-center gap-1" style="font-size: 0.85rem;" data-bs-toggle="modal" data-bs-target="#tambahMapelModal">
                             <i class="bi bi-plus-lg"></i> Tambah Mapel
                         </button>
                     </div>
-                </div>
+                </form>
 
                 <!-- Table Content -->
                 <div class="table-responsive rounded-3 border">
@@ -116,6 +122,19 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Pagination --}}
+                @if ($subjects->hasPages())
+                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between mt-3 gap-2 px-1">
+                    <small class="text-muted">
+                        Menampilkan {{ $subjects->firstItem() }}&ndash;{{ $subjects->lastItem() }} dari {{ $subjects->total() }} mapel
+                    </small>
+                    <div>
+                        {{ $subjects->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+                @endif
+
             </div>
         </div>
     </div>

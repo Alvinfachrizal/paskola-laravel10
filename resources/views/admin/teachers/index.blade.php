@@ -14,7 +14,7 @@
 
 @section('content')
 @php
-    $guruAktif  = $teachers->where('status', 'aktif')->count() + $teachers->where('status', 'active')->count();
+    $guruAktif  = $teachers->where('status', 'active')->count();
     $guruPNS    = $teachers->where('employment_type', 'PNS')->count();
     $guruHonorer= $teachers->where('employment_type', 'Honorer')->count();
 @endphp
@@ -102,7 +102,7 @@
                     <div class="col-md-3">
                         <select name="status" class="form-select bg-light rounded-pill py-2 text-muted border-light" style="font-size:0.875rem;" onchange="this.form.submit()">
                             <option value="">Semua Status</option>
-                            <option value="aktif"    {{ request('status') == 'aktif'    ? 'selected' : '' }}>Aktif</option>
+                            <option value="active"    {{ request('status') == 'active'    ? 'selected' : '' }}>Aktif</option>
                             <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                             <option value="retired"  {{ request('status') == 'retired'  ? 'selected' : '' }}>Pensiun</option>
                         </select>
@@ -152,7 +152,7 @@
                                         <span class="text-dark" style="font-size:0.875rem;">{{ $teacher->subject_specialty ?: '-' }}</span>
                                     </td>
                                     <td>
-                                        @if($teacher->status === 'aktif' || $teacher->status === 'active')
+                                        @if($teacher->status === 'active')
                                             <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 fw-medium border border-success-subtle">Aktif</span>
                                         @else
                                             <span class="badge bg-light text-muted rounded-pill px-3 py-2 fw-medium border border-light">Nonaktif</span>

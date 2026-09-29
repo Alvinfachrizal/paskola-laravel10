@@ -40,7 +40,7 @@ class StudentController extends Controller
         // Stats (sebelum filter agar stat card tidak ikut terfilter)
         $stats = [
             'total'    => Student::where('school_id', $schoolId)->count(),
-            'aktif'    => Student::where('school_id', $schoolId)->where('status', 'aktif')->count(),
+            'aktif'    => Student::where('school_id', $schoolId)->where('status', 'active')->count(),
             'keluar'   => Student::where('school_id', $schoolId)->whereIn('status', ['inactive', 'dropped_out'])->count(),
             'lulus'    => Student::where('school_id', $schoolId)->where('status', 'graduated')->count(),
         ];

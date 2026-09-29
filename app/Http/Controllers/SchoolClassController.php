@@ -16,11 +16,21 @@ class SchoolClassController extends Controller
     public function index(Request $request)
     {
         $schoolId = $request->user()->school_id;
-        $classes = SchoolClass::with(['schoolYear', 'major', 'homeroomTeacher'])
+        $query = SchoolClass::with(['schoolYear', 'major', 'homeroomTeacher'])
             ->where('school_id', $schoolId)
             ->orderBy('grade')
-            ->orderBy('name')
-            ->get();
+            ->orderBy('name');
+            
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('room_number', 'like', "%{$search}%");
+        }
+        
+        if ($year = $request->input('school_year_id')) {
+            $query->where('school_year_id', $year);
+        }
+
+        $classes = $query->paginate(15)->withQueryString();
             
         $schoolYears = SchoolYear::where('school_id', $schoolId)->orderBy('start_date', 'desc')->get();
         $majors = Major::where('school_id', $schoolId)->orderBy('name')->get();

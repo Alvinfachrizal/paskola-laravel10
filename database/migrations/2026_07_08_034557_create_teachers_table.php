@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('subject_specialty')->nullable();
             $table->string('employment_type')->nullable();
             $table->date('join_date')->nullable();
-            $table->string('status')->default('aktif');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
