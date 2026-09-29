@@ -26,7 +26,7 @@
                 <i class="bi bi-mortarboard"></i>
             </div>
             <div>
-                <h3 class="mb-0 fw-bold">{{ count($students) }}</h3>
+                <h3 class="mb-0 fw-bold">{{ $stats['total'] }}</h3>
                 <small class="text-muted">Total Siswa</small>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <i class="bi bi-check-circle"></i>
             </div>
             <div>
-                <h3 class="mb-0 fw-bold">{{ collect($students)->where('status', 'active')->count() }}</h3>
+                <h3 class="mb-0 fw-bold">{{ $stats['aktif'] }}</h3>
                 <small class="text-muted">Aktif</small>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 <i class="bi bi-x-circle"></i>
             </div>
             <div>
-                <h3 class="mb-0 fw-bold">{{ collect($students)->whereIn('status', ['inactive', 'dropped_out'])->count() }}</h3>
+                <h3 class="mb-0 fw-bold">{{ $stats['keluar'] }}</h3>
                 <small class="text-muted">Keluar / Pindah</small>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 <i class="bi bi-person-check"></i>
             </div>
             <div>
-                <h3 class="mb-0 fw-bold">{{ collect($students)->where('status', 'graduated')->count() }}</h3>
+                <h3 class="mb-0 fw-bold">{{ $stats['lulus'] }}</h3>
                 <small class="text-muted">Lulus</small>
             </div>
         </div>
@@ -82,19 +82,25 @@
     <div class="card-body px-4 pb-4">
         
         <!-- Filters -->
-        <div class="d-flex flex-wrap gap-3 mb-4">
+        <form method="GET" action="{{ route('admin.students.index') }}" class="d-flex flex-wrap gap-3 mb-4" id="filterForm">
             <div class="flex-grow-1" style="max-width: 400px;">
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0 text-muted" style="border-radius: 8px 0 0 8px;"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control border-start-0 ps-0" placeholder="Cari nama, NISN, NIS..." style="border-radius: 0 8px 8px 0; background: white;">
+                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Cari nama, NISN, NIS, email..." value="{{ request('search') }}" style="border-radius: 0 8px 8px 0; background: white;" autocomplete="off">
                 </div>
             </div>
-            <select class="form-select" style="width: 200px; border-radius: 8px;">
-                <option>Semua Status</option>
-                <option>Aktif</option>
-                <option>Lulus</option>
+            <select name="status" class="form-select" style="width: 200px; border-radius: 8px;" onchange="this.form.submit()">
+                <option value="">Semua Status</option>
+                <option value="aktif"    {{ request('status') == 'aktif'       ? 'selected' : '' }}>Aktif</option>
+                <option value="graduated" {{ request('status') == 'graduated'  ? 'selected' : '' }}>Lulus</option>
+                <option value="inactive" {{ request('status') == 'inactive'    ? 'selected' : '' }}>Nonaktif</option>
+                <option value="dropped_out" {{ request('status') == 'dropped_out' ? 'selected' : '' }}>Dikeluarkan</option>
             </select>
-        </div>
+            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">Cari</button>
+            @if(request('search') || request('status'))
+                <a href="{{ route('admin.students.index') }}" class="btn btn-light btn-sm rounded-pill px-3 text-muted">Reset</a>
+            @endif
+        </form>
 
         <div class="table-responsive border-0">
             <table class="table table-hover align-middle mb-0" style="min-width: 900px;">
@@ -113,9 +119,9 @@
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
-                    @forelse ($students as $index => $student)
+                    @forelse ($students as $student)
                         <tr>
-                            <td class="text-primary">{{ $index + 1 }}</td>
+                            <td class="text-primary">{{ $students->firstItem() + $loop->index }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px; font-weight:600;">
@@ -173,8 +179,18 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
+
+        {{-- Pagination --}}
+        @if ($students->hasPages())
+        <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between mt-3 gap-2">
+            <small class="text-muted">
+                Menampilkan {{ $students->firstItem() }}–{{ $students->lastItem() }} dari {{ $students->total() }} siswa
+            </small>
+            <div>
+                {{ $students->links('pagination::bootstrap-5') }}
+            </div>
+        </div>
+        @endif
 
 <!-- Modal Tambah Siswa -->
 <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel" aria-hidden="true">

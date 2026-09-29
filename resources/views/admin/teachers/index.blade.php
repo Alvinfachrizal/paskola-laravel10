@@ -14,10 +14,9 @@
 
 @section('content')
 @php
-    $totalGuru = $teachers->count();
-    $guruAktif = $teachers->where('status', 'aktif')->count();
-    $guruPNS = $teachers->where('employment_type', 'PNS')->count();
-    $guruHonorer = $teachers->where('employment_type', 'Honorer')->count();
+    $guruAktif  = $teachers->where('status', 'aktif')->count() + $teachers->where('status', 'active')->count();
+    $guruPNS    = $teachers->where('employment_type', 'PNS')->count();
+    $guruHonorer= $teachers->where('employment_type', 'Honorer')->count();
 @endphp
 
 <!-- Stats Row -->
@@ -29,7 +28,7 @@
                 <i class="bi bi-person"></i>
             </div>
             <div>
-                <h3 class="fw-bold mb-0 fs-4">{{ $totalGuru }}</h3>
+                <h3 class="fw-bold mb-0 fs-4">{{ $totalTeachers }}</h3>
                 <p class="text-muted mb-0" style="font-size:0.75rem;">Total Guru</p>
             </div>
         </div>
@@ -91,23 +90,30 @@
             
             <div class="card-body px-4 pb-4 pt-2">
                 <!-- Filter Row -->
-                <div class="row g-2 mb-4">
-                    <div class="col-md-8">
+                <form method="GET" action="{{ route('admin.teachers.index') }}" class="row g-2 mb-4">
+                    <div class="col-md-7">
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 rounded-start-pill ps-3 text-muted">
                                 <i class="bi bi-search"></i>
                             </span>
-                            <input type="text" class="form-control bg-light border-start-0 rounded-end-pill py-2" placeholder="Cari nama, NIP..." style="font-size:0.875rem;">
+                            <input type="text" name="search" class="form-control bg-light border-start-0 rounded-end-pill py-2" placeholder="Cari nama, NIP, mapel, email..." value="{{ request('search') }}" style="font-size:0.875rem;" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <select class="form-select bg-light rounded-pill py-2 text-muted border-light" style="font-size:0.875rem;">
-                            <option>Semua Status</option>
-                            <option>Aktif</option>
-                            <option>Nonaktif</option>
+                    <div class="col-md-3">
+                        <select name="status" class="form-select bg-light rounded-pill py-2 text-muted border-light" style="font-size:0.875rem;" onchange="this.form.submit()">
+                            <option value="">Semua Status</option>
+                            <option value="aktif"    {{ request('status') == 'aktif'    ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                            <option value="retired"  {{ request('status') == 'retired'  ? 'selected' : '' }}>Pensiun</option>
                         </select>
                     </div>
-                </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-3 flex-fill" style="font-size:0.875rem;">Cari</button>
+                        @if(request('search') || request('status'))
+                            <a href="{{ route('admin.teachers.index') }}" class="btn btn-light rounded-pill px-3 text-muted" style="font-size:0.875rem;">Reset</a>
+                        @endif
+                    </div>
+                </form>
 
                 <!-- Table Content -->
                 <div class="table-responsive rounded-3 border">
@@ -246,6 +252,19 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Pagination --}}
+                @if ($teachers->hasPages())
+                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between mt-3 gap-2 px-1">
+                    <small class="text-muted">
+                        Menampilkan {{ $teachers->firstItem() }}&ndash;{{ $teachers->lastItem() }} dari {{ $teachers->total() }} guru
+                    </small>
+                    <div>
+                        {{ $teachers->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+                @endif
+
             </div>
         </div>
     </div>

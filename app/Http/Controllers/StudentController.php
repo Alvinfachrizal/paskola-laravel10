@@ -17,8 +17,37 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $schoolId = $request->user()->school_id;
-        $students = Student::where('school_id', $schoolId)->orderBy('name')->get();
-        return view('admin.students.index', compact('students'));
+
+        $query = Student::where('school_id', $schoolId)
+            ->with('user')
+            ->orderBy('name');
+
+        // Search: nama, NISN, NIS, atau email
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nisn', 'like', "%{$search}%")
+                  ->orWhere('nis', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"));
+            });
+        }
+
+        // Filter status
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Stats (sebelum filter agar stat card tidak ikut terfilter)
+        $stats = [
+            'total'    => Student::where('school_id', $schoolId)->count(),
+            'aktif'    => Student::where('school_id', $schoolId)->where('status', 'aktif')->count(),
+            'keluar'   => Student::where('school_id', $schoolId)->whereIn('status', ['inactive', 'dropped_out'])->count(),
+            'lulus'    => Student::where('school_id', $schoolId)->where('status', 'graduated')->count(),
+        ];
+
+        $students = $query->paginate(15)->withQueryString();
+
+        return view('admin.students.index', compact('students', 'stats'));
     }
 
     /**

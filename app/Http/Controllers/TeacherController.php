@@ -18,8 +18,32 @@ class TeacherController extends Controller
     public function index(Request $request)
     {
         $schoolId = $request->user()->school_id;
-        $teachers = Teacher::where('school_id', $schoolId)->orderBy('name')->get();
-        return view('admin.teachers.index', compact('teachers'));
+
+        $query = Teacher::where('school_id', $schoolId)
+            ->with('user')
+            ->orderBy('name');
+
+        // Search: nama, NIP, atau email user
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nip', 'like', "%{$search}%")
+                  ->orWhere('subject_specialty', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"));
+            });
+        }
+
+        // Filter status
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Stats tetap dari total keseluruhan (tidak terfilter)
+        $totalTeachers = Teacher::where('school_id', $schoolId)->count();
+
+        $teachers = $query->paginate(15)->withQueryString();
+
+        return view('admin.teachers.index', compact('teachers', 'totalTeachers'));
     }
 
     /**
