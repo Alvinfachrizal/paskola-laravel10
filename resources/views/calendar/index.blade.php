@@ -141,7 +141,8 @@
                 <input type="hidden" name="year"  value="{{ $year }}">
                 <input type="hidden" name="month" value="{{ $month }}">
                 <select name="class_id" class="form-select form-select-sm rounded-3" onchange="this.form.submit()" style="min-width:160px">
-                    <option value="">Semua Kelas</option>
+                    <option value="all" {{ $classId === 'all' ? 'selected' : '' }}>Semua Event</option>
+                    <option value="school_only" {{ $classId === 'school_only' ? 'selected' : '' }}>Event Umum (Sekolah)</option>
                     @foreach($classes as $cls)
                     <option value="{{ $cls->id }}" {{ $classId == $cls->id ? 'selected' : '' }}>{{ $cls->name }}</option>
                     @endforeach

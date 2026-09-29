@@ -34,14 +34,18 @@ class AcademicEventController extends Controller
         $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
         $endOfMonth   = $startOfMonth->copy()->endOfMonth();
 
-        // Filter kelas: admin bisa lihat semua/filter, guru/siswa hanya kelasnya
-        $classId = $request->get('class_id'); // null = sekolah-wide
+        $classId = $request->input('class_id', 'all');
+        
+        $queryClassId = $classId;
+        if ($classId === 'school_only') {
+            $queryClassId = null;
+        }
 
         // Ambil event untuk bulan ini
         $events = $this->calendarService->getEventsForPeriod(
             $startOfMonth->toDateString(),
             $endOfMonth->toDateString(),
-            $classId ?: null
+            $queryClassId
         );
 
         // Kelompokkan event per tanggal (untuk render grid)

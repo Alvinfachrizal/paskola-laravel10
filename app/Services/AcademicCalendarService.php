@@ -64,16 +64,19 @@ class AcademicCalendarService
      * @param  string|null $classId    Filter kelas (null = tampilkan semua/sekolah-wide)
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getEventsForPeriod(string $startDate, string $endDate, ?string $classId = null)
+    public function getEventsForPeriod(string $startDate, string $endDate, ?string $classId = 'all')
     {
-        return AcademicEvent::with('category')
+        $query = AcademicEvent::with(['category', 'schoolClass'])
             ->where(function ($q) use ($startDate, $endDate) {
                 // Event yang overlap dengan rentang yang diminta
                 $q->where('start_date', '<=', $endDate)
                   ->where('end_date', '>=', $startDate);
-            })
-            ->forClassOrSchool($classId)
-            ->orderBy('start_date')
-            ->get();
+            });
+
+        if ($classId !== 'all') {
+            $query->forClassOrSchool($classId);
+        }
+
+        return $query->orderBy('start_date')->get();
     }
 }
