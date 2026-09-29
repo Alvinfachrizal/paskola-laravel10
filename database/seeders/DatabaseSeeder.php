@@ -33,10 +33,11 @@ class DatabaseSeeder extends Seeder
             // ── Pengaturan Sistem ─────────────────────────────────────────────
             ModuleSeeder::class,           // 3. Toggle modul aktif/nonaktif
 
-            // ── Akademik ─────────────────────────────────────────────────────
+            // ── Akademik & LMS ───────────────────────────────────────────────
             AcademicCalendarSeeder::class, // 4. Kalender & event
             TimetableSeeder::class,        // 5. Jadwal pelajaran
             GradeSeeder::class,            // 6. Nilai & rapor
+            LmsSeeder::class,              // 7. Materi & Tugas LMS
 
             // ── Keuangan ─────────────────────────────────────────────────────
             FinanceSeeder::class,          // 7. Jenis tagihan master
