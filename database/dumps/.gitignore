@@ -1,0 +1,7 @@
+# Abaikan semua file dump agar tidak ikut ke repository git
+# (file dump terlalu besar dan berisi data sensitif)
+*.sql
+*.sql.gz
+
+# Tapi tetap track folder ini agar tidak hilang
+!.gitkeep
