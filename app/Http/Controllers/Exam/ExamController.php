@@ -255,7 +255,7 @@ class ExamController extends Controller
 
         $exam->load(['subject', 'classes']);
         $participants = ExamParticipant::where('exam_id', $exam->id)
-            ->with('student.user')
+            ->with('student')
             ->orderBy('status')
             ->paginate(30);
 
@@ -271,7 +271,7 @@ class ExamController extends Controller
         $this->examService->finalizeAllExpired($exam);
 
         $participants = ExamParticipant::where('exam_id', $exam->id)
-            ->with('student.user', 'approvedBy')
+            ->with('student', 'approvedBy')
             ->whereIn('status', ['selesai', 'waktu_habis'])
             ->orderByDesc('score')
             ->get();

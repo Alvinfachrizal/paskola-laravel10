@@ -49,7 +49,8 @@
 {{-- Statistik Singkat --}}
 <div class="row g-3 mb-4">
     @php
-    $statuses = $participants->groupBy(fn($p) => $p->status->value);
+    // groupBy langsung dari collection items (bukan paginator)
+    $statuses = $participants->getCollection()->groupBy(fn($p) => $p->status->value);
     @endphp
     @foreach(['belum_mulai'=>['label'=>'Belum Mulai','icon'=>'bi-clock','color'=>'secondary'], 'mengerjakan'=>['label'=>'Sedang','icon'=>'bi-pencil','color'=>'warning'], 'selesai'=>['label'=>'Selesai','icon'=>'bi-check-circle','color'=>'success'], 'waktu_habis'=>['label'=>'Waktu Habis','icon'=>'bi-alarm','color'=>'danger']] as $s => $info)
     <div class="col-6 col-md-3">
@@ -147,7 +148,7 @@
                 </div>
                 <p class="text-muted small">Siswa yang belum mulai di bawah ini akan dibuka jadwal susulannya (kosongkan untuk semua):</p>
                 <div style="max-height:200px;overflow-y:auto;" class="border rounded-3 p-2">
-                    @foreach($participants->where('status.value', 'belum_mulai') as $p)
+                    @foreach($participants->getCollection()->filter(fn($p) => $p->status->value === 'belum_mulai') as $p)
                     <div class="form-check">
                         <input type="checkbox" name="participant_ids[]" value="{{ $p->id }}"
                             class="form-check-input" id="mp_{{ $p->id }}" checked>

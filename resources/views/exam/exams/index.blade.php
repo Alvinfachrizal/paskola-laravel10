@@ -88,7 +88,7 @@
                             <i class="bi bi-pencil me-1"></i>Edit
                         </a>
                         @endif
-                        @if($exam->status->value === 'published')
+                        @if(in_array($exam->status->value, ['published', 'closed']))
                         <a href="{{ route('exam.exams.participants', $exam) }}" class="btn btn-sm btn-outline-success rounded-3">
                             <i class="bi bi-people me-1"></i>Peserta
                         </a>
