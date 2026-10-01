@@ -86,14 +86,10 @@ class QuestionController extends Controller
             'options'             => 'required|array|min:2|max:5',
             'options.*.text'      => 'nullable|string|max:1000',
             'options.*.image'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'options.*.is_correct'=> 'nullable|boolean',
+            'correct_option'      => 'required|integer|min:0|max:4',
+        ], [
+            'correct_option.required' => 'Pilih salah satu jawaban yang benar.',
         ]);
-
-        // Validasi: tepat 1 jawaban benar
-        $correctCount = collect($request->options)->filter(fn ($o) => !empty($o['is_correct']))->count();
-        if ($correctCount !== 1) {
-            return back()->withErrors(['options' => 'Tepat satu pilihan jawaban harus ditandai sebagai benar.'])->withInput();
-        }
 
         // Validasi: setiap pilihan harus punya teks atau gambar
         foreach ($request->options as $idx => $opt) {
@@ -133,7 +129,7 @@ class QuestionController extends Controller
                     'question_id' => $question->id,
                     'option_text' => $opt['text'] ?? null,
                     'image_path'  => $optImagePath,
-                    'is_correct'  => !empty($opt['is_correct']),
+                    'is_correct'  => ((int)$request->correct_option === (int)$idx),
                     'position'    => $idx + 1,
                 ]);
             }
@@ -169,13 +165,10 @@ class QuestionController extends Controller
             'options.*.id'        => 'nullable|uuid',
             'options.*.text'      => 'nullable|string|max:1000',
             'options.*.image'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'options.*.is_correct'=> 'nullable|boolean',
+            'correct_option'      => 'required|integer|min:0|max:4',
+        ], [
+            'correct_option.required' => 'Pilih salah satu jawaban yang benar.',
         ]);
-
-        $correctCount = collect($request->options)->filter(fn ($o) => !empty($o['is_correct']))->count();
-        if ($correctCount !== 1) {
-            return back()->withErrors(['options' => 'Tepat satu pilihan jawaban harus ditandai sebagai benar.'])->withInput();
-        }
 
         foreach ($request->options as $idx => $opt) {
             $hasText  = !empty($opt['text']);
@@ -221,7 +214,7 @@ class QuestionController extends Controller
                     'question_id' => $question->id,
                     'option_text' => $opt['text'] ?? null,
                     'image_path'  => $optImagePath,
-                    'is_correct'  => !empty($opt['is_correct']),
+                    'is_correct'  => ((int)$request->correct_option === (int)$idx),
                     'position'    => $idx + 1,
                 ]);
             }
