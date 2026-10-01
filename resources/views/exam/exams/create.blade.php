@@ -119,10 +119,24 @@
                 <span class="badge bg-primary-subtle text-primary rounded-pill" id="selectedCount">0 soal dipilih</span>
             </div>
             <div class="card-body p-0">
-                {{-- Cari soal --}}
-                <div class="p-3 border-bottom">
-                    <input type="text" id="questionSearch" class="form-control form-control-sm rounded-3"
-                        placeholder="Cari soal...">
+                {{-- Cari dan Filter soal --}}
+                <div class="p-3 border-bottom bg-light">
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-7">
+                            <input type="text" id="questionSearch" class="form-control form-control-sm rounded-3" placeholder="Cari teks soal...">
+                        </div>
+                        <div class="col-md-5">
+                            <select id="subjectFilter" class="form-select form-select-sm rounded-3">
+                                <option value="">Semua Mapel</option>
+                                @foreach($subjects as $s)
+                                <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-3 w-100" id="selectAllBtn">
+                        <i class="bi bi-check2-all me-1"></i> Pilih Semua (Filter Saat Ini)
+                    </button>
                 </div>
 
                 @error('question_ids')
@@ -134,7 +148,8 @@
                 <div id="questionList" style="max-height:480px;overflow-y:auto;">
                     @forelse($questions as $idx => $question)
                     <div class="question-row border-bottom p-3 d-flex gap-3 align-items-start"
-                        data-text="{{ strtolower($question->question_text) }}">
+                        data-text="{{ strtolower($question->question_text) }}"
+                        data-subject-id="{{ $question->subject_id }}">
                         <div class="pt-1">
                             <input type="checkbox" name="question_ids[]" value="{{ $question->id }}"
                                 class="form-check-input question-check" id="q_{{ $question->id }}"
@@ -188,12 +203,36 @@ function updatePoints(checkbox) {
     if (pointInput) pointInput.disabled = !checkbox.checked;
 }
 
-// Cari soal
-document.getElementById('questionSearch').addEventListener('input', function() {
-    const q = this.value.toLowerCase();
+// Filter soal
+function filterQuestions() {
+    const q = document.getElementById('questionSearch').value.toLowerCase();
+    const subjectId = document.getElementById('subjectFilter').value;
+    
     document.querySelectorAll('.question-row').forEach(row => {
-        row.style.display = row.dataset.text.includes(q) ? '' : 'none';
+        const matchText = row.dataset.text.includes(q);
+        const matchSubject = subjectId === '' || row.dataset.subjectId === subjectId;
+        row.style.display = (matchText && matchSubject) ? '' : 'none';
     });
+}
+
+document.getElementById('questionSearch').addEventListener('input', filterQuestions);
+document.getElementById('subjectFilter').addEventListener('change', filterQuestions);
+
+// Pilih Semua
+document.getElementById('selectAllBtn').addEventListener('click', function() {
+    const visibleRows = Array.from(document.querySelectorAll('.question-row')).filter(row => row.style.display !== 'none');
+    
+    let allChecked = true;
+    visibleRows.forEach(row => {
+        if (!row.querySelector('.question-check').checked) allChecked = false;
+    });
+
+    visibleRows.forEach(row => {
+        const cb = row.querySelector('.question-check');
+        cb.checked = !allChecked;
+        updatePoints(cb);
+    });
+    updateCount();
 });
 
 // Init
