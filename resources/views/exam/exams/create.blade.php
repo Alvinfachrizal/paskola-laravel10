@@ -41,7 +41,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Mata Pelajaran <span class="text-danger">*</span></label>
-                    <select name="subject_id" class="form-select rounded-3 @error('subject_id') is-invalid @enderror" required>
+                    <select name="subject_id" id="examSubject" class="form-select rounded-3 @error('subject_id') is-invalid @enderror" required>
                         <option value="">— Pilih Mapel —</option>
                         @foreach($subjects as $s)
                         <option value="{{ $s->id }}" {{ old('subject_id') == $s->id ? 'selected' : '' }}>{{ $s->name }}</option>
@@ -217,6 +217,12 @@ function filterQuestions() {
 
 document.getElementById('questionSearch').addEventListener('input', filterQuestions);
 document.getElementById('subjectFilter').addEventListener('change', filterQuestions);
+
+// Sinkronkan pilihan mapel kiri dengan filter kanan otomatis
+document.getElementById('examSubject').addEventListener('change', function() {
+    document.getElementById('subjectFilter').value = this.value;
+    filterQuestions();
+});
 
 // Pilih Semua
 document.getElementById('selectAllBtn').addEventListener('click', function() {
