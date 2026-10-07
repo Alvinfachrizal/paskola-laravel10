@@ -74,6 +74,99 @@ class QuestionController extends Controller
 
     // ── Store: Simpan Soal Baru ──────────────────────────────────────────────
 
+    // ── Import Soal (Format Aiken) ──
+    public function importAiken(Request $request)
+    {
+        $this->authorize('create', Question::class);
+        $request->validate([
+            'subject_id' => 'required|exists:subjects,id',
+            'aiken_text' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+        $lines = explode("\n", str_replace("\r", "", trim($request->aiken_text)));
+        
+        $questionsAdded = 0;
+        
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            $currentQuestionText = '';
+            $currentOptions = [];
+            $status = 'question';
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line)) continue;
+
+                // Cek Answer (sekarang JAWABAN:)
+                if (preg_match('/^JAWABAN:\s*([A-Z])$/i', $line, $matches)) {
+                    $answerLabel = strtoupper($matches[1]);
+                    
+                    if (empty($currentQuestionText) || empty($currentOptions)) {
+                        throw new \Exception("Format tidak valid sebelum JAWABAN: {$answerLabel}. Pastikan ada soal dan pilihan ganda.");
+                    }
+                    
+                    // Simpan Soal
+                    $question = Question::create([
+                        'school_id' => $user->school_id,
+                        'teacher_id' => $user->id,
+                        'subject_id' => $request->subject_id,
+                        'question_text' => $currentQuestionText,
+                        'in_bank' => true,
+                    ]);
+                    
+                    // Simpan Opsi
+                    $position = 1;
+                    foreach ($currentOptions as $label => $text) {
+                        QuestionOption::create([
+                            'question_id' => $question->id,
+                            'option_text' => $text,
+                            'is_correct' => ($label === $answerLabel),
+                            'position' => $position++,
+                        ]);
+                    }
+                    
+                    $questionsAdded++;
+                    
+                    // Reset
+                    $currentQuestionText = '';
+                    $currentOptions = [];
+                    $status = 'question';
+                    continue;
+                }
+
+                // Cek Option (A. / B. / C) )
+                if (preg_match('/^([A-Z])[\.\)]\s+(.+)$/i', $line, $matches)) {
+                    $label = strtoupper($matches[1]);
+                    $text = $matches[2];
+                    $currentOptions[$label] = $text;
+                    $status = 'options';
+                    continue;
+                }
+
+                // Jika bukan answer & bukan option, berarti teks soal
+                if ($status === 'question') {
+                    // Opsional: hilangkan penomoran di awal kalimat jika ada (misal "1. ")
+                    if ($currentQuestionText === '') {
+                        $line = preg_replace('/^\d+[\.\)]\s*/', '', $line);
+                    }
+                    $currentQuestionText .= ($currentQuestionText === '' ? '' : "\n") . $line;
+                }
+            }
+
+            // Jika ada soal yang belum ditutup dengan JAWABAN: di akhir text
+            if (!empty($currentQuestionText) && !empty($currentOptions)) {
+                throw new \Exception("Pertanyaan terakhir belum memiliki kunci jawaban (JAWABAN: X).");
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
+            return back()->with('success', "Berhasil mengimpor {$questionsAdded} soal baru dari teks Aiken.");
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            return back()->with('error', 'Gagal mengimpor soal. Periksa kembali format Aiken Anda. Detail: ' . $e->getMessage());
+        }
+    }
+
     public function store(Request $request)
     {
         $this->authorize('create', Question::class);

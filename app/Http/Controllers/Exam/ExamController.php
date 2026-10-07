@@ -34,6 +34,7 @@ class ExamController extends Controller
 
         $user  = auth()->user();
         $query = Exam::with(['subject', 'teacher'])
+            ->withCount(['participants', 'questions'])
             ->where('school_id', $user->school_id);
 
         if ($user->hasRole('Guru')) {

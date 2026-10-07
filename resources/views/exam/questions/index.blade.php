@@ -8,9 +8,14 @@
         <p class="text-muted mb-0 small">Kelola soal pilihan ganda yang bisa dipakai ulang di berbagai ujian</p>
     </div>
     @can('create', App\Models\Question::class)
-    <a href="{{ route('exam.questions.create') }}" class="btn btn-primary btn-sm rounded-3 px-3">
-        <i class="bi bi-plus-circle me-1"></i> Tambah Soal
-    </a>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary btn-sm rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#importAikenModal">
+            <i class="bi bi-file-earmark-text me-1"></i> Import (Aiken)
+        </button>
+        <a href="{{ route('exam.questions.create') }}" class="btn btn-primary btn-sm rounded-3 px-3">
+            <i class="bi bi-plus-circle me-1"></i> Tambah Soal
+        </a>
+    </div>
     @endcan
 </div>
 @endsection
@@ -153,6 +158,66 @@
     </div>
     @endif
 </div>
+
+@can('create', App\Models\Question::class)
+<!-- Modal Import Aiken -->
+<div class="modal fade" id="importAikenModal" tabindex="-1" aria-labelledby="importAikenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-bottom px-4 py-3">
+                <h5 class="modal-title fw-bold" id="importAikenModalLabel">Import Soal Cepat (Format Aiken)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('exam.questions.import-aiken') }}" method="POST">
+                @csrf
+                <div class="modal-body px-4 py-4 bg-light">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mata Pelajaran <span class="text-danger">*</span></label>
+                        <select name="subject_id" class="form-select rounded-3" required>
+                            <option value="">— Pilih Mapel —</option>
+                            @foreach($subjects as $s)
+                            <option value="{{ $s->id }}">{{ $s->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Teks Soal (Format Aiken) <span class="text-danger">*</span></label>
+                        <div class="alert alert-info small py-2 mb-3 rounded-3 border-0">
+                            <i class="bi bi-info-circle-fill me-1"></i> <strong>Cara Menulis Format Aiken:</strong><br>
+                            <ul class="mb-0 mt-1 ps-3">
+                                <li>Tulis pertanyaan dalam satu atau beberapa baris teks biasa.</li>
+                                <li>Setiap pilihan jawaban harus diawali dengan huruf besar dan titik (contoh: <code>A.</code> atau <code>B.</code>).</li>
+                                <li>Baris terakhir dari setiap soal <strong>WAJIB</strong> menuliskan kunci jawaban dengan huruf besar (contoh: <code>JAWABAN: B</code>).</li>
+                                <li>Beri jarak satu baris kosong (Enter) untuk memisahkan antar soal satu dan soal lainnya.</li>
+                            </ul>
+                        </div>
+                        <textarea name="aiken_text" class="form-control rounded-3 font-monospace small bg-white" rows="12" placeholder="1. Ibukota negara Indonesia adalah...
+A. Bandung
+B. Jakarta
+C. Surabaya
+D. Bali
+JAWABAN: B
+
+2. Siapakah Presiden pertama Indonesia?
+A. Soeharto
+B. Soekarno
+C. B.J. Habibie
+JAWABAN: B" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer px-4 py-3 border-top">
+                    <button type="button" class="btn btn-light rounded-3 px-3 fw-medium" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 fw-medium">
+                        <i class="bi bi-cloud-arrow-up me-1"></i> Import Sekarang
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endcan
 
 @endsection
 

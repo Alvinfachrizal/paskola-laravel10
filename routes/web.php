@@ -244,6 +244,7 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('settings')->name('setti
 Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
 
     // ── Bank Soal: Guru (CRUD) + Admin/Kepsek (read-only via policy) ──────
+    Route::post('questions/import-aiken', [\App\Http\Controllers\Exam\QuestionController::class, 'importAiken'])->name('questions.import-aiken');
     Route::resource('questions', \App\Http\Controllers\Exam\QuestionController::class);
 
     // ── Ujian (Exam): Guru CRUD, Admin/Kepsek read-only ──────────────────

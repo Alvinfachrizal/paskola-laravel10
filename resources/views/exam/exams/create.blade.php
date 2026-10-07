@@ -211,7 +211,14 @@ function filterQuestions() {
     document.querySelectorAll('.question-row').forEach(row => {
         const matchText = row.dataset.text.includes(q);
         const matchSubject = subjectId === '' || row.dataset.subjectId === subjectId;
-        row.style.display = (matchText && matchSubject) ? '' : 'none';
+        
+        if (matchText && matchSubject) {
+            row.classList.remove('d-none');
+            row.classList.add('d-flex');
+        } else {
+            row.classList.remove('d-flex');
+            row.classList.add('d-none');
+        }
     });
 }
 
@@ -226,7 +233,7 @@ document.getElementById('examSubject').addEventListener('change', function() {
 
 // Pilih Semua
 document.getElementById('selectAllBtn').addEventListener('click', function() {
-    const visibleRows = Array.from(document.querySelectorAll('.question-row')).filter(row => row.style.display !== 'none');
+    const visibleRows = Array.from(document.querySelectorAll('.question-row')).filter(row => !row.classList.contains('d-none'));
     
     let allChecked = true;
     visibleRows.forEach(row => {

@@ -71,10 +71,10 @@
                                 {{ $exam->start_at->format('d M Y, H:i') }} – {{ $exam->end_at->format('H:i') }}
                             </span>
                             <span><i class="bi bi-people me-1"></i>
-                                {{ $exam->participants()->count() }} peserta
+                                {{ $exam->participants_count }} peserta
                             </span>
                             <span><i class="bi bi-collection me-1"></i>
-                                {{ $exam->questions()->count() }} soal
+                                {{ $exam->questions_count }} soal
                             </span>
                         </div>
                     </div>

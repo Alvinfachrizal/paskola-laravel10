@@ -264,6 +264,7 @@
             }
         </style>
         @yield('styles')
+        @stack('styles')
     </head>
     <body>
         <div id="app-wrapper">
@@ -390,6 +391,7 @@
             });
         </script>
         @yield('scripts')
+        @stack('scripts')
         @if(Auth::check())
         <!-- Bottom Navigation for All Roles (Mobile) -->
         <div class="bottom-nav d-lg-none">

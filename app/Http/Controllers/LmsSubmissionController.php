@@ -26,7 +26,7 @@ class LmsSubmissionController extends Controller
     public function index(Request $request)
     {
         $user  = Auth::user();
-        $query = LmsSubmission::with(['assignment', 'student'])->latest();
+        $query = LmsSubmission::with(['assignment.subject', 'student.user'])->latest();
 
         if ($user->hasRole('Siswa')) {
             // Siswa hanya lihat submission milik sendiri (student_id = users.id)
