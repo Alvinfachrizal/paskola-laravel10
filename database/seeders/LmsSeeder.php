@@ -183,6 +183,51 @@ class LmsSeeder extends Seeder
             ]
         );
 
-        $this->command->info('Data LMS (Materi, Tugas, Submission) berhasil dibuat!');
+        $this->command->info('Membuat Bulk Data Materi & Tugas untuk menambah volume...');
+        $faker = \Faker\Factory::create('id_ID');
+        $allClasses = SchoolClass::all();
+        $allTeachers = User::role('Guru')->get();
+
+        if ($allClasses->count() > 0 && $allTeachers->count() > 0) {
+            foreach ($allClasses as $c) {
+                // Buat 5 materi ekstra per kelas
+                for ($i=0; $i<5; $i++) {
+                    $randomTeacher = $allTeachers->random();
+                    // Ambil satu mapel yang terkait dengan nama guru jika ada, atau random
+                    $randomSubject = Subject::inRandomOrder()->first();
+                    
+                    LmsMaterial::firstOrCreate(
+                        [
+                            'school_id' => $school->id,
+                            'class_id' => $c->id,
+                            'title' => 'Materi Tambahan ' . $faker->words(3, true),
+                        ],
+                        [
+                            'subject_id' => $randomSubject->id ?? $mapelMtk->id,
+                            'teacher_id' => $randomTeacher->id,
+                            'description' => $faker->paragraph(),
+                            'type' => $faker->randomElement(['document', 'video', 'link']),
+                        ]
+                    );
+
+                    LmsAssignment::firstOrCreate(
+                        [
+                            'school_id' => $school->id,
+                            'class_id' => $c->id,
+                            'title' => 'Tugas Tambahan ' . $faker->words(3, true),
+                        ],
+                        [
+                            'subject_id' => $randomSubject->id ?? $mapelMtk->id,
+                            'teacher_id' => $randomTeacher->id,
+                            'description' => $faker->paragraph(),
+                            'due_date' => Carbon::now()->addDays(rand(-5, 10)),
+                            'max_score' => 100
+                        ]
+                    );
+                }
+            }
+        }
+
+        $this->command->info('Data LMS (Materi, Tugas, Submission) berhasil dibuat & diperbanyak!');
     }
 }

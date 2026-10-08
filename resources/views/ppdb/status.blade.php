@@ -15,7 +15,125 @@
         </div>
     </div>
 
-    {{-- Status Utama --}}
+    @if($payment && $payment->status->value !== 'paid')
+        {{-- PAYWALL: Form Pembayaran --}}
+        <div class="ppdb-card card p-4 mb-4 text-center">
+            <i class="bi bi-wallet2 text-primary mb-3" style="font-size: 3rem;"></i>
+            <h4 class="fw-bold mb-2">Selesaikan Pembayaran Anda</h4>
+            <p class="text-muted mb-4">
+                Gelombang pendaftaran ini mewajibkan biaya formulir sebesar 
+                <strong class="text-dark">Rp {{ number_format($payment->amount, 0, ',', '.') }}</strong>. 
+                Silakan transfer ke rekening berikut:
+            </p>
+            
+            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 mb-4">
+                {{-- Info Rekening --}}
+                <div class="bg-light p-4 rounded-4 text-start shadow-sm" style="min-width: 280px; border-left: 4px solid var(--ppdb-primary);">
+                    <p class="mb-1 small text-muted"><i class="bi bi-bank me-2"></i>Bank Tujuan</p>
+                    <p class="mb-2 fw-bold text-dark fs-6">{{ $settings['ppdb_bank_name'] ?? 'Bank BSI' }}</p>
+                    
+                    <p class="mb-1 small text-muted"><i class="bi bi-123 me-2"></i>No. Rekening</p>
+                    <p class="mb-2 fw-bold fs-4 text-primary font-monospace">{{ $settings['ppdb_bank_account'] ?? '7123 4567 89' }}</p>
+                    
+                    <p class="mb-1 small text-muted"><i class="bi bi-person me-2"></i>Atas Nama</p>
+                    <p class="mb-0 small fw-semibold">{{ $settings['ppdb_bank_owner'] ?? 'Yayasan Pendidikan Paskola' }}</p>
+                </div>
+
+                {{-- QRIS (Jika ada) --}}
+                @if(!empty($settings['ppdb_qris_path']))
+                <div class="text-center p-3 rounded-4 shadow-sm bg-white" style="border: 2px dashed #ccc; min-width: 280px;">
+                    <p class="fw-bold mb-3 text-dark fs-6"><i class="bi bi-qr-code-scan me-2"></i>Atau Scan QRIS</p>
+                    <img src="{{ Storage::url($settings['ppdb_qris_path']) }}" alt="QRIS Pembayaran" class="img-fluid rounded-3" style="max-width: 250px; object-fit: contain;">
+                </div>
+                @endif
+            </div>
+
+            @if(!$payment->proof_path)
+                <form action="{{ route('ppdb.payment.store', $applicant->registration_code) }}" method="POST" enctype="multipart/form-data" class="text-start">
+                    @csrf
+                    <label class="form-label small fw-semibold">Upload Bukti Transfer <span class="text-danger">*</span></label>
+                    <input type="file" name="payment_receipt" class="form-control" accept="image/*" required>
+                    <small class="text-muted d-block mt-1 mb-3">Format: JPG, PNG. Maks: 2MB.</small>
+                    <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-cloud-arrow-up me-2"></i>Kirim Bukti Pembayaran</button>
+                </form>
+            @elseif($payment->status->value === 'failed')
+                <div class="alert alert-danger rounded-3 text-start mb-3">
+                    <i class="bi bi-x-circle me-2"></i>
+                    <strong>Pembayaran Ditolak!</strong> {{ $payment->notes }}
+                </div>
+                <form action="{{ route('ppdb.payment.store', $applicant->registration_code) }}" method="POST" enctype="multipart/form-data" class="text-start">
+                    @csrf
+                    <label class="form-label small fw-semibold">Upload Ulang Bukti Transfer <span class="text-danger">*</span></label>
+                    <input type="file" name="payment_receipt" class="form-control" accept="image/*" required>
+                    <small class="text-muted d-block mt-1 mb-3">Format: JPG, PNG. Maks: 2MB.</small>
+                    <button type="submit" class="btn btn-danger w-100 rounded-3"><i class="bi bi-cloud-arrow-up me-2"></i>Kirim Ulang Bukti</button>
+                </form>
+            @else
+                <div class="alert alert-info rounded-3 text-start">
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    <strong>Bukti terkirim!</strong> Pembayaran Anda sedang diverifikasi oleh admin. Kami akan memprosesnya paling lambat 1x24 jam.
+                </div>
+            @endif
+        </div>
+
+    @elseif($needsCompleteData)
+        {{-- FORM LENGKAPI DATA (Dokumen & Seragam) --}}
+        <div class="ppdb-card card p-4 mb-4">
+            <h4 class="fw-bold mb-3"><i class="bi bi-clipboard-check text-primary me-2"></i>Lengkapi Berkas Anda</h4>
+            <p class="text-muted small">Pembayaran Anda telah diverifikasi! (Atau Anda mendaftar di gelombang gratis). Silakan lengkapi dokumen dan ukuran seragam untuk menyelesaikan pendaftaran.</p>
+            
+            <form action="{{ route('ppdb.complete-data.store', $applicant->registration_code) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                
+                <hr class="my-4">
+                <h6 class="fw-bold mb-3">1. Pilih Ukuran Seragam</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label small">Ukuran Seragam <span class="text-danger">*</span></label>
+                        <select name="ukuran" class="form-select" required>
+                            <option value="">- Pilih -</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                    @if($applicant->gender === 'perempuan')
+                        <div class="col-md-4">
+                            <label class="form-label small">Memakai Kerudung? <span class="text-danger">*</span></label>
+                            <select name="pakai_kerudung" class="form-select" required>
+                                <option value="ya">Ya</option>
+                                <option value="tidak">Tidak</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">Jenis Bawahan <span class="text-danger">*</span></label>
+                            <select name="jenis_bawahan" class="form-select" required>
+                                <option value="rok">Rok</option>
+                                <option value="celana">Celana</option>
+                            </select>
+                        </div>
+                    @endif
+                </div>
+
+                <hr class="my-4">
+                <h6 class="fw-bold mb-3">2. Upload Dokumen Syarat</h6>
+                <div class="row g-3 mb-4">
+                    @foreach(['ijazah' => 'Ijazah / SKL', 'kk' => 'Kartu Keluarga', 'akta_kelahiran' => 'Akta Kelahiran', 'pas_foto' => 'Pas Foto 3x4'] as $key => $label)
+                    <div class="col-md-6">
+                        <label class="form-label small">{{ $label }} <span class="text-danger">*</span></label>
+                        <input type="file" name="dokumen[{{ $key }}]" class="form-control" accept=".jpg,.png,.pdf" required>
+                    </div>
+                    @endforeach
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-save me-2"></i>Simpan Data & Selesaikan Pendaftaran</button>
+            </form>
+        </div>
+
+    @else
+        {{-- Status Utama --}}
     @php
         $status     = $applicant->status; // PpdbApplicantStatus enum
         $statusVal  = $status->value;
@@ -214,5 +332,7 @@
             <i class="bi bi-arrow-left me-2"></i>Cek Status Lain
         </a>
     </div>
+    @endif
+
 </div>
 @endsection

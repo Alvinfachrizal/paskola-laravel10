@@ -119,6 +119,107 @@
     {{-- Kolom Kanan: Dokumen, Nilai, Daftar Ulang --}}
     <div class="col-lg-7">
 
+        {{-- Verifikasi Pembayaran --}}
+        @php
+            $payment = $applicant->payments()->where('payment_type', 'registration_fee')->first();
+        @endphp
+        @if($payment)
+        <div class="card border-0 shadow-sm rounded-4 mb-4" style="border-left: 4px solid var(--ppdb-primary) !important;">
+            <div class="card-header bg-white border-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0"><i class="bi bi-wallet2 me-2 text-primary"></i>Verifikasi Pembayaran</h6>
+                @if($payment->status->value === 'paid')
+                    <span class="badge bg-success rounded-pill small">Lunas</span>
+                @elseif($payment->status->value === 'failed')
+                    <span class="badge bg-danger rounded-pill small">Ditolak</span>
+                @elseif($payment->proof_path)
+                    <span class="badge bg-warning text-dark rounded-pill small">Menunggu Verifikasi</span>
+                @else
+                    <span class="badge bg-secondary rounded-pill small">Belum Dibayar</span>
+                @endif
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 mb-3">
+                    <div>
+                        <p class="text-muted small mb-1">Nominal Tagihan</p>
+                        <p class="fw-bold fs-5 text-dark mb-0">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
+                    </div>
+                    <div>
+                        @if($payment->proof_path)
+                            <button type="button" class="btn btn-outline-primary btn-sm rounded-3" data-bs-toggle="modal" data-bs-target="#paymentProofModal">
+                                <i class="bi bi-eye me-1"></i>Lihat Bukti Transfer
+                            </button>
+                        @else
+                            <p class="text-muted small mb-0"><i class="bi bi-hourglass-split me-1"></i>Belum ada bukti</p>
+                        @endif
+                    </div>
+                </div>
+
+                @if($payment->proof_path && $payment->status->value !== 'paid')
+                <div class="d-flex gap-2">
+                    <form action="{{ route('admin.ppdb.payments.verify', [$applicant, $payment]) }}" method="POST" class="d-inline-block">
+                        @csrf
+                        <input type="hidden" name="action" value="paid">
+                        <button type="submit" class="btn btn-success btn-sm fw-semibold rounded-3" onclick="return confirm('Verifikasi pembayaran ini sebagai lunas?')">
+                            <i class="bi bi-check-circle me-1"></i>Verifikasi Valid
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-danger btn-sm fw-semibold rounded-3" data-bs-toggle="modal" data-bs-target="#rejectPaymentModal">
+                        <i class="bi bi-x-circle me-1"></i>Tolak Bukti
+                    </button>
+                </div>
+                @endif
+                
+                @if($payment->status->value === 'failed' && $payment->notes)
+                <div class="alert alert-danger small py-2 mt-3 mb-0">
+                    <i class="bi bi-exclamation-circle me-1"></i> <strong>Ditolak:</strong> {{ $payment->notes }}
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Modal Preview Bukti Pembayaran --}}
+        @if($payment->proof_path)
+        <div class="modal fade" id="paymentProofModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Bukti Pembayaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="{{ Storage::url($payment->proof_path) }}" class="img-fluid rounded-3" alt="Bukti Pembayaran">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Tolak Pembayaran --}}
+        <div class="modal fade" id="rejectPaymentModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <form action="{{ route('admin.ppdb.payments.verify', [$applicant, $payment]) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="action" value="failed">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-circle me-2"></i>Tolak Bukti Pembayaran</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="small text-muted mb-3">Pendaftar harus mengunggah ulang bukti pembayaran jika ditolak.</p>
+                            <label class="form-label small fw-semibold">Alasan Penolakan</label>
+                            <textarea name="rejection_notes" class="form-control rounded-3" rows="3" required placeholder="Contoh: Foto buram, nominal tidak sesuai..."></textarea>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger rounded-3">Kirim Penolakan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endif
+        @endif
+
         {{-- Verifikasi Dokumen --}}
         <div class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-header bg-white border-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
@@ -140,6 +241,9 @@
                                 <div>
                                     <div class="fw-semibold small">{{ $doc->docTypeLabel() }}</div>
                                     <div class="text-muted" style="font-size:.75rem">{{ $doc->original_name }}</div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm rounded-3 mt-2 py-1 px-2" style="font-size:.75rem" data-bs-toggle="modal" data-bs-target="#previewModal{{ $doc->id }}">
+                                        <i class="bi bi-eye me-1"></i> Preview File
+                                    </button>
                                 </div>
                                 <span class="badge {{ $doc->status->badgeClass() }} rounded-pill small">
                                     {{ $doc->status->label() }}
@@ -188,6 +292,20 @@
                                                 <button type="submit" class="btn btn-danger rounded-3">Konfirmasi Tolak</button>
                                             </div>
                                         </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- Modal Preview Dokumen --}}
+                            <div class="modal fade" id="previewModal{{ $doc->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-xl modal-dialog-centered">
+                                    <div class="modal-content rounded-4 border-0 shadow">
+                                        <div class="modal-header border-0 pb-0">
+                                            <h5 class="modal-title fw-bold">Preview: {{ $doc->docTypeLabel() }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-0 mt-3" style="height: 80vh;">
+                                            <iframe src="{{ Storage::url($doc->file_path) }}" class="w-100 h-100 border-0 rounded-bottom-4"></iframe>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

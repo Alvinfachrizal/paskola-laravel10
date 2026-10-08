@@ -205,6 +205,10 @@ Route::middleware(['module.active:ppdb'])->prefix('ppdb')->name('ppdb.')->group(
     // Upload ulang dokumen yang ditolak (status need_revision)
     Route::get('/status/{registration_code}/upload-ulang', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'showReupload'])->name('reupload.form');
     Route::post('/status/{registration_code}/upload-ulang', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'storeReupload'])->name('reupload.store');
+
+    // Paywall & Lengkapi Data
+    Route::post('/status/{registration_code}/payment', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'uploadPayment'])->name('payment.store');
+    Route::post('/status/{registration_code}/complete-data', [\App\Http\Controllers\Ppdb\PpdbPublicController::class, 'completeData'])->name('complete-data.store');
 });
 
 // ─── PPDB Admin Panel (hanya Admin & Super Admin) ──────────────────────────
@@ -214,9 +218,14 @@ Route::prefix('admin/ppdb')->name('admin.ppdb.')->middleware(['auth', 'role:Supe
     Route::post('/gelombang', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'storeWave'])->name('waves.store');
     Route::put('/gelombang/{wave}', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'updateWave'])->name('waves.update');
 
+    // Pengaturan PPDB (Rekening dll)
+    Route::get('/pengaturan', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'settings'])->name('settings');
+    Route::put('/pengaturan', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'updateSettings'])->name('settings.update');
+
     // Detail & verifikasi dokumen per pendaftar
     Route::get('/pendaftar/{applicant}', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'show'])->name('applicants.show');
     Route::post('/pendaftar/{applicant}/dokumen/{document}/verifikasi', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'verifyDocument'])->name('documents.verify');
+    Route::post('/pendaftar/{applicant}/pembayaran/{payment}/verifikasi', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'verifyPayment'])->name('payments.verify');
 
     // Input nilai seleksi & override status
     Route::post('/pendaftar/{applicant}/skor', [\App\Http\Controllers\Ppdb\PpdbAdminController::class, 'storeScore'])->name('scores.store');

@@ -164,16 +164,19 @@ class MasterDataSeeder extends Seeder
 
         // ── 6. Siswa ───────────────────────────────────────────────────────────
         $siswaPerKelas = [
-            'X-IPA-1'  => 8,
-            'X-IPA-2'  => 7,
-            'X-IPS-1'  => 6,
-            'XI-IPA-1' => 5,
-            'XI-IPS-1' => 4,
+            'X-IPA-1'  => 35,
+            'X-IPA-2'  => 30,
+            'X-IPS-1'  => 32,
+            'XI-IPA-1' => 30,
+            'XI-IPS-1' => 28,
         ];
 
         $studentCount = 0;
         $allStudents  = [];
-        $nisCounter   = 20250001;
+        
+        // Ambil max NIS yang sudah ada agar tidak duplikat saat dijalankan berulang
+        $maxNis = Student::max('nis');
+        $nisCounter   = $maxNis ? intval($maxNis) + 1 : 20250001;
 
         foreach ($siswaPerKelas as $className => $jumlah) {
             $class = $classes[$className] ?? null;

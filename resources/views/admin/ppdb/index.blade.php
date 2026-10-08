@@ -7,12 +7,15 @@
         <h2 class="h3 mb-1 fw-bold" style="letter-spacing:-.5px">Manajemen PPDB</h2>
         <p class="text-muted mb-0 small">Penerimaan Peserta Didik Baru — Tahun Ajaran {{ date('Y') }}/{{ date('Y')+1 }}</p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex flex-wrap gap-2">
         <a href="{{ route('ppdb.index') }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-3">
             <i class="bi bi-box-arrow-up-right me-1"></i>Portal Publik
         </a>
         <a href="{{ route('admin.ppdb.waves') }}" class="btn btn-outline-secondary btn-sm rounded-3">
             <i class="bi bi-layers me-1"></i>Kelola Gelombang
+        </a>
+        <a href="{{ route('admin.ppdb.settings') }}" class="btn btn-outline-secondary btn-sm rounded-3" title="Pengaturan Rekening & QRIS">
+            <i class="bi bi-gear me-1"></i>Pengaturan
         </a>
         <a href="{{ route('admin.ppdb.uniform-recap') }}" class="btn btn-primary btn-sm rounded-3">
             <i class="bi bi-bag me-1"></i>Rekap Seragam

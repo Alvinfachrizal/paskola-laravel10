@@ -65,16 +65,6 @@ class PpdbPublicController extends Controller
             'parent_name'   => 'required|string|max:150',
             'parent_phone'  => 'required|string|max:20',
             'email'         => 'nullable|email|max:150',
-
-            // Dokumen upload (semua wajib)
-            'dokumen'                => 'required|array',
-            'dokumen.*'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-
-            // Data seragam
-            'ukuran'                 => 'required|in:S,M,L,XL,XXL',
-            // Field kerudung & jenis_bawahan hanya wajib jika perempuan
-            'pakai_kerudung'         => 'nullable|in:ya,tidak',
-            'jenis_bawahan'          => 'nullable|in:rok,celana',
         ]);
 
         // Pastikan gelombang masih aktif dan belum tutup
@@ -99,41 +89,6 @@ class PpdbPublicController extends Controller
                 'parent_phone'      => $validated['parent_phone'],
                 'email'             => $validated['email'] ?? null,
                 'status'            => PpdbApplicantStatus::Pending->value,
-            ]);
-
-            // ── 2. Simpan dokumen ────────────────────────────────────────────
-            if ($request->hasFile('dokumen')) {
-                foreach ($request->file('dokumen') as $docType => $file) {
-                    $path = $file->store("ppdb/dokumen/{$applicant->registration_code}", 'public');
-
-                    PpdbDocument::create([
-                        'applicant_id'  => $applicant->id,
-                        'doc_type'      => $docType,
-                        'file_path'     => $path,
-                        'original_name' => $file->getClientOriginalName(),
-                        'status'        => 'pending',
-                    ]);
-                }
-            }
-
-            // ── 3. Simpan data seragam ───────────────────────────────────────
-            $gender = $validated['gender'];
-
-            // Aturan bisnis: jika laki-laki, set otomatis
-            $pakaiKerudung = false;
-            $jenisBawahan  = 'celana';
-
-            if ($gender === 'perempuan') {
-                $pakaiKerudung = ($validated['pakai_kerudung'] ?? 'tidak') === 'ya';
-                $jenisBawahan  = $validated['jenis_bawahan'] ?? 'rok';
-            }
-
-            PpdbUniformOrder::create([
-                'applicant_id'   => $applicant->id,
-                'gender'         => $gender,
-                'pakai_kerudung' => $pakaiKerudung,
-                'jenis_bawahan'  => $jenisBawahan,
-                'ukuran'         => $validated['ukuran'],
             ]);
 
             // Simpan kode ke session untuk ditampilkan di halaman sukses
@@ -225,7 +180,13 @@ class PpdbPublicController extends Controller
             ->with(['wave', 'documents', 'uniformOrder', 'selectionScores', 'payments', 'reregistration'])
             ->firstOrFail();
 
-        return view('ppdb.status', compact('applicant'));
+        $payment = $applicant->payments()->where('payment_type', 'registration_fee')->first();
+        $needsCompleteData = $applicant->documents->isEmpty() && !$applicant->uniformOrder;
+        
+        $school = \App\Models\School::first();
+        $settings = $school?->settings ?? [];
+
+        return view('ppdb.status', compact('applicant', 'payment', 'needsCompleteData', 'settings'));
     }
 
     /**
@@ -314,5 +275,97 @@ class PpdbPublicController extends Controller
 
         return redirect()->route('ppdb.status', $registrationCode)
             ->with('success', 'Dokumen berhasil diupload ulang. Panitia akan memverifikasi kembali dokumen Anda.');
+    }
+    /**
+     * Upload Bukti Pembayaran Pendaftaran
+     */
+    public function uploadPayment(Request $request, $registrationCode)
+    {
+        $applicant = PpdbApplicant::where('registration_code', $registrationCode)->firstOrFail();
+        $this->verifySession($applicant);
+
+        $request->validate([
+            'payment_receipt' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $payment = $applicant->payments()->where('payment_type', 'registration_fee')->first();
+        
+        if ($payment) {
+            $path = $request->file('payment_receipt')->store("ppdb/payments/{$applicant->registration_code}", 'public');
+            
+            $payment->update([
+                'payment_method' => 'Transfer Bank',
+                'proof_path'     => $path,
+                'status'         => 'pending' // pending verification by admin
+            ]);
+        }
+
+        return redirect()->route('ppdb.status', $registrationCode)
+            ->with('success', 'Bukti pembayaran berhasil diunggah. Silakan tunggu verifikasi admin.');
+    }
+
+    /**
+     * Submit Dokumen & Seragam setelah pembayaran selesai
+     */
+    public function completeData(Request $request, $registrationCode)
+    {
+        $applicant = PpdbApplicant::where('registration_code', $registrationCode)->firstOrFail();
+        $this->verifySession($applicant);
+
+        $validated = $request->validate([
+            'dokumen'                => 'required|array',
+            'dokumen.*'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'ukuran'                 => 'required|in:S,M,L,XL,XXL',
+            'pakai_kerudung'         => 'nullable|in:ya,tidak',
+            'jenis_bawahan'          => 'nullable|in:rok,celana',
+        ]);
+
+        DB::transaction(function () use ($validated, $request, $applicant) {
+            // Simpan dokumen
+            if ($request->hasFile('dokumen')) {
+                foreach ($request->file('dokumen') as $docType => $file) {
+                    $path = $file->store("ppdb/dokumen/{$applicant->registration_code}", 'public');
+
+                    PpdbDocument::create([
+                        'applicant_id'  => $applicant->id,
+                        'doc_type'      => $docType,
+                        'file_path'     => $path,
+                        'original_name' => $file->getClientOriginalName(),
+                        'status'        => 'pending',
+                    ]);
+                }
+            }
+
+            // Simpan data seragam
+            $gender = $applicant->gender;
+            $pakaiKerudung = false;
+            $jenisBawahan  = 'celana';
+
+            if ($gender === 'perempuan') {
+                $pakaiKerudung = ($validated['pakai_kerudung'] ?? 'tidak') === 'ya';
+                $jenisBawahan  = $validated['jenis_bawahan'] ?? 'rok';
+            }
+
+            PpdbUniformOrder::create([
+                'applicant_id'   => $applicant->id,
+                'gender'         => $gender,
+                'pakai_kerudung' => $pakaiKerudung,
+                'jenis_bawahan'  => $jenisBawahan,
+                'ukuran'         => $validated['ukuran'],
+            ]);
+        });
+
+        return redirect()->route('ppdb.status', $registrationCode)
+            ->with('success', 'Dokumen dan data seragam berhasil disimpan.');
+    }
+
+    /**
+     * Pastikan pendaftar sudah verifikasi session (login dengan tanggal lahir)
+     */
+    private function verifySession(PpdbApplicant $applicant)
+    {
+        if (!session("ppdb_auth_{$applicant->registration_code}")) {
+            abort(403, 'Sesi telah berakhir atau tidak sah. Silakan login kembali melalui menu Cek Status.');
+        }
     }
 }

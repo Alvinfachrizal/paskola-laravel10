@@ -115,6 +115,34 @@ class PpdbAdminController extends Controller
     }
 
     /**
+     * Verifikasi bukti pembayaran pendaftaran.
+     * Route: POST /admin/ppdb/pendaftar/{applicant}/pembayaran/{payment}/verifikasi
+     */
+    public function verifyPayment(Request $request, PpdbApplicant $applicant, \App\Models\PpdbPayment $payment)
+    {
+        $validated = $request->validate([
+            'action'          => 'required|in:paid,failed',
+            'rejection_notes' => 'required_if:action,failed|nullable|string|max:500',
+        ]);
+
+        $payment->update([
+            'status' => $validated['action'],
+            'notes'  => $validated['action'] === 'failed' ? $validated['rejection_notes'] : null,
+            'paid_at'=> $validated['action'] === 'paid' ? now() : null,
+        ]);
+
+        // Jika pembayaran lunas, ubah status pendaftar menjadi pending agar bisa lanjut upload dokumen
+        if ($validated['action'] === 'paid' && $applicant->status->value === 'payment_pending') {
+            $applicant->update([
+                'status' => \App\Enums\PpdbApplicantStatus::Pending->value,
+                'admin_notes' => 'Pembayaran lunas. Silakan lengkapi dokumen persyaratan.',
+            ]);
+        }
+
+        return back()->with('success', 'Status pembayaran berhasil diperbarui.');
+    }
+
+    /**
      * Hitung ulang status pendaftar berdasarkan kondisi dokumennya.
      * Dipanggil setiap kali ada perubahan status dokumen.
      */
@@ -254,7 +282,7 @@ class PpdbAdminController extends Controller
                 'parent_name'  => $applicant->parent_name,
                 'parent_phone' => $applicant->parent_phone,
                 'entry_year'   => now()->year,
-                'status'       => 'aktif',
+                'status'       => 'active',
             ]);
 
             // ── 2b. Sambungkan semua ppdb_payments milik pendaftar ini ke student baru ──
@@ -385,5 +413,42 @@ class PpdbAdminController extends Controller
 
         return redirect()->route('admin.ppdb.waves')
             ->with('success', "Gelombang \"{$wave->name}\" berhasil diperbarui.");
+    }
+
+    public function settings()
+    {
+        $school = School::first();
+        $settings = $school?->settings ?? [];
+        return view('admin.ppdb.settings', compact('school', 'settings'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $request->validate([
+            'ppdb_bank_name'    => 'nullable|string|max:100',
+            'ppdb_bank_account' => 'nullable|string|max:50',
+            'ppdb_bank_owner'   => 'nullable|string|max:150',
+            'ppdb_qris'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $school = School::firstOrFail();
+        $settings = $school->settings ?? [];
+
+        $settings['ppdb_bank_name']    = $request->ppdb_bank_name;
+        $settings['ppdb_bank_account'] = $request->ppdb_bank_account;
+        $settings['ppdb_bank_owner']   = $request->ppdb_bank_owner;
+
+        if ($request->hasFile('ppdb_qris')) {
+            // Delete old QRIS if exists
+            if (isset($settings['ppdb_qris_path']) && \Storage::disk('public')->exists($settings['ppdb_qris_path'])) {
+                \Storage::disk('public')->delete($settings['ppdb_qris_path']);
+            }
+            $path = $request->file('ppdb_qris')->store('ppdb/settings', 'public');
+            $settings['ppdb_qris_path'] = $path;
+        }
+
+        $school->update(['settings' => $settings]);
+
+        return back()->with('success', 'Pengaturan Pembayaran PPDB berhasil disimpan.');
     }
 }
