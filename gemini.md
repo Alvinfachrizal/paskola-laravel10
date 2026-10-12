@@ -102,11 +102,14 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 
 ### H. PPDB Online (Penerimaan Siswa Baru)
 - [x] Landing Page Pendaftaran (Portal publik `/ppdb`) — `docs/ppdb.md`
-- [x] Form Pendaftaran, Upload Dokumen, dan Data Seragam (Conditional JS)
+- [x] Alur Bertahap: Form Pendaftaran Awal (Lead Capture) & Paywall Gelombang Berbayar
+- [x] Pengaturan Rekening Bank & Gambar QRIS Dinamis (Admin PPDB Settings)
+- [x] Upload & Verifikasi Bukti Pembayaran Manual oleh Panitia/Admin PPDB
+- [x] Form Pelengkapan Berkas Dokumen & Data Seragam (Conditional JS)
 - [x] Login ulang calon siswa (Kode Pendaftaran + Tanggal Lahir, tanpa OTP)
 - [x] Dashboard Panitia: Verifikasi Dokumen per item
 - [x] Dashboard Panitia: Input Nilai Seleksi + Override Status manual
-- [x] Alur Daftar Ulang: otomatis buat akun `User` + data `Student`
+- [x] Alur Daftar Ulang: otomatis buat akun `User` + data `Student` (status `active`)
 - [x] Dashboard Panitia: Rekap Kebutuhan Seragam (printable)
 - [x] Manajemen Gelombang PPDB (multi-gelombang, berbayar/gratis)
 - [x] Upload ulang dokumen oleh pendaftar (jika status `need_revision`)
@@ -153,7 +156,7 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 | B. Administrasi Master Data | Siswa, Guru, Kelas, Mapel, Tahun Ajaran |
 | C. LMS (lengkap) | Materi, Tugas, Submission, Penilaian via student_grades |
 | E. Nilai & Rapor (inti) | Bobot, input nilai, kalkulasi otomatis, verifikasi, publish, RBAC policy |
-| H. PPDB Online (inti) | Portal publik, dashboard panitia, daftar ulang, rekap seragam, upload ulang |
+| H. PPDB Online (inti & alur bertahap) | Portal publik, lead capture & paywall, pengaturan rekening/QRIS dinamis, verifikasi bukti bayar, dashboard panitia, daftar ulang, rekap seragam, upload ulang |
 | I. Dashboard Role | Admin, Guru, Siswa, Ortu |
 | J. Kalender Akademik | Grid kalender bulanan, CRUD event, kategori fleksibel, AcademicCalendarService, unit test 5/5 |
 | K. Jadwal Pelajaran (Lengkap) | Skema DB, Setting Hari & Jam, Master Ruangan, Form Input Jadwal + Validasi 3 Lapis, Tampilan Grid Mingguan Guru & Siswa + Integrasi Libur |
@@ -168,4 +171,4 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 4. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
 5. **Kalkulasi Nilai Final Rapor** (Sinkronisasi nilai ujian online ke modul Grading)
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-09-28 setelah Modul Ujian Online selesai.)*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-10-08 setelah penyempurnaan alur bertahap & verifikasi pembayaran PPDB.)*
