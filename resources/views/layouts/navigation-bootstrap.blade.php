@@ -142,7 +142,7 @@
                 <i class="bi bi-cash-coin"></i> Verifikasi Bayar
             </a>
             @endif
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('announcements.index') }}" class="sidebar-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
             @if(Auth::user()->hasRole('Super Admin'))
@@ -185,7 +185,7 @@
             </a>
 
             <div class="nav-group-title">Lainnya</div>
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('announcements.index') }}" class="sidebar-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
         @endif
@@ -232,7 +232,7 @@
             </a>
 
             <div class="nav-group-title">Lainnya</div>
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('announcements.index') }}" class="sidebar-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
         @endif
@@ -271,7 +271,7 @@
             <a href="{{ route('finance.bills.index') }}" class="sidebar-link {{ request()->routeIs('finance.bills.*') ? 'active' : '' }}">
                 <i class="bi bi-wallet2"></i> Tagihan & Pembayaran
             </a>
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('announcements.index') }}" class="sidebar-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
         @endif
@@ -295,7 +295,7 @@
             <a href="{{ route('finance.bills.index') }}" class="sidebar-link {{ request()->routeIs('finance.bills.*') ? 'active' : '' }}">
                 <i class="bi bi-wallet2"></i> Tagihan & Pembayaran
             </a>
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('announcements.index') }}" class="sidebar-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i> Pengumuman
             </a>
         @endif

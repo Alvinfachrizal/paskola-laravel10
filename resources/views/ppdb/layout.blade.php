@@ -6,6 +6,14 @@
     <meta name="description" content="Portal PPDB Online - Penerimaan Peserta Didik Baru {{ date('Y') }}/{{ date('Y')+1 }}">
     <title>@yield('title', 'Portal PPDB Online') — Paskola</title>
 
+    <!-- PWA Meta -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a56db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Paskola PPDB">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
     {{-- Bootstrap 5 --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     {{-- Bootstrap Icons --}}
@@ -241,5 +249,16 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @stack('scripts')
+
+{{-- PWA Install Prompt Banner --}}
+@include('components.pwa-prompt')
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+    }
+</script>
 </body>
 </html>

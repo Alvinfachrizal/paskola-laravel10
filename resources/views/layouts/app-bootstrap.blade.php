@@ -7,6 +7,14 @@
 
         <title>@hasSection('title') @yield('title') @else {{ config('app.name', 'Paskola') }} @endif</title>
 
+        {{-- PWA Meta --}}
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#0d6efd">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="Paskola">
+        <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
         <!-- Fonts: Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -288,8 +296,16 @@
                     </div>
                     
                     <div class="d-flex align-items-center gap-2 gap-md-3">
-                        <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                        <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center position-relative" style="width:40px;height:40px;"
+                            onclick="window.location='{{ route('announcements.index') }}'">
                             <i class="bi bi-bell"></i>
+                            @auth
+                            <span id="notif-badge"
+                                  class="position-absolute badge rounded-pill bg-danger d-none"
+                                  style="top:3px;right:3px;font-size:0.6rem;padding:0.2em 0.4em;min-width:16px;">
+                                0
+                            </span>
+                            @endauth
                         </button>
                         <div class="dropdown">
                             <button class="btn btn-light border-0 d-flex align-items-center gap-2 p-1 p-md-2" type="button" data-bs-toggle="dropdown">
@@ -360,6 +376,9 @@
                         </div>
                     @endif
 
+                    {{-- Push Notification Permission Banner (muncul otomatis jika belum aktif) --}}
+                    @include('components.pwa-push-permission')
+
                     @yield('content')
                     {{ $slot ?? '' }}
                 </main>
@@ -368,6 +387,40 @@
 
         <!-- Bootstrap 5 JS CDN -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        @auth
+        <script>
+        // ─── Service Worker Register (Global) ────────────────────────────────
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        }
+
+        // ─── Unread Badge Polling (setiap 60 detik) ──────────────────────────
+        function updateNotifBadge() {
+            fetch('{{ route("announcements.unread-count") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (!data) return;
+                const badge = document.getElementById('notif-badge');
+                if (!badge) return;
+                if (data.count > 0) {
+                    badge.textContent = data.count > 99 ? '99+' : data.count;
+                    badge.classList.remove('d-none');
+                } else {
+                    badge.classList.add('d-none');
+                }
+            })
+            .catch(() => {});
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNotifBadge();
+            setInterval(updateNotifBadge, 60000);
+        });
+        </script>
+        @endauth
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const sidebarToggle = document.getElementById('sidebarToggle');
@@ -426,5 +479,8 @@
             </a>
         </div>
         @endif
+
+        {{-- PWA Install Prompt Banner (Android & iOS) --}}
+        @include('components.pwa-prompt')
     </body>
 </html>

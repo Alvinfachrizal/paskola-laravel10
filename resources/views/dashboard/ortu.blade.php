@@ -259,39 +259,36 @@
 
         <!-- Pengumuman Sekolah -->
         <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex align-items-center gap-2">
-                <i class="bi bi-bell text-warning"></i>
-                <h6 class="fw-bold mb-0 text-dark" style="font-size:0.95rem;">Pengumuman Sekolah</h6>
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell text-warning"></i>
+                    <h6 class="fw-bold mb-0 text-dark" style="font-size:0.95rem;">Pengumuman Sekolah</h6>
+                </div>
+                <a href="{{ route('announcements.index') }}" class="text-primary text-decoration-none fw-semibold" style="font-size:0.75rem;">
+                    Lihat Semua
+                </a>
             </div>
             <div class="card-body px-4 pb-4 pt-2">
                 <div class="d-flex flex-column gap-3">
-                    <div class="border-bottom pb-3">
-                        <div class="d-flex gap-2">
-                            <i class="bi bi-info-circle text-danger mt-1" style="font-size:0.9rem;"></i>
-                            <div>
-                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">UTS Semester Ganjil mulai 21 Juli 2026</h6>
-                                <div class="text-muted" style="font-size:0.75rem;">1 jam lalu</div>
+                    @forelse($announcements ?? [] as $ann)
+                    <div class="{{ !$loop->last ? 'border-bottom pb-3' : '' }}">
+                        <a href="{{ route('announcements.show', $ann->id) }}" class="text-decoration-none text-dark d-flex gap-2">
+                            <i class="bi {{ $ann->priority === 'urgent' ? 'bi-exclamation-circle text-danger' : ($ann->is_pinned ? 'bi-pin-fill text-warning' : 'bi-info-circle text-primary') }} mt-1" style="font-size:0.9rem;"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">{{ $ann->title }}</h6>
+                                <div class="text-muted d-flex align-items-center justify-content-between" style="font-size:0.75rem;">
+                                    <span>{{ $ann->author->name ?? 'Sekolah' }}</span>
+                                    <span>{{ $ann->published_at ? $ann->published_at->diffForHumans() : $ann->created_at->diffForHumans() }}</span>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                    <div class="border-bottom pb-3">
-                        <div class="d-flex gap-2">
-                            <i class="bi bi-info-circle text-success mt-1" style="font-size:0.9rem;"></i>
-                            <div>
-                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">Laporan perkembangan siswa tersedia</h6>
-                                <div class="text-muted" style="font-size:0.75rem;">2 hari lalu</div>
-                            </div>
-                        </div>
+                    @empty
+                    <div class="text-center py-3 text-muted" style="font-size:0.85rem;">
+                        <i class="bi bi-bell-slash mb-1 d-block fs-5"></i>
+                        Belum ada pengumuman
                     </div>
-                    <div>
-                        <div class="d-flex gap-2">
-                            <i class="bi bi-info-circle text-danger mt-1" style="font-size:0.9rem;"></i>
-                            <div>
-                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">Pertemuan wali murid - 18 Juli 2026</h6>
-                                <div class="text-muted" style="font-size:0.75rem;">3 hari lalu</div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>

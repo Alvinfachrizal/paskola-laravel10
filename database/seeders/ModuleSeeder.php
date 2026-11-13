@@ -96,6 +96,15 @@ class ModuleSeeder extends Seeder
                 'is_active'   => true,
                 'sort_order'  => 9,
             ],
+            [
+                'key'         => 'pengumuman',
+                'name'        => 'Pengumuman & Notifikasi',
+                'description' => 'Broadcast informasi sekolah ke guru, siswa, dan orang tua via web feed & Web Push Notification.',
+                'icon'        => 'bi-megaphone',
+                'is_core'     => false,
+                'is_active'   => true,
+                'sort_order'  => 10,
+            ],
         ];
 
         // Gunakan updateOrCreate agar aman dijalankan ulang

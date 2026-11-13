@@ -21,6 +21,8 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\Question::class        => \App\Policies\QuestionPolicy::class,
         \App\Models\Exam::class            => \App\Policies\ExamPolicy::class,
         \App\Models\ExamParticipant::class => \App\Policies\ExamParticipantPolicy::class,
+        // ── Modul Pengumuman ────────────────────────────────────────────────
+        \App\Models\Announcement::class   => \App\Policies\AnnouncementPolicy::class,
     ];
 
     /**

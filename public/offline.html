@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline — Paskola SIMS</title>
+    <link rel="icon" href="/icons/icon-192.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 1.5rem;
+            color: #1e293b;
+        }
+        .offline-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        .app-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .btn-reload {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.75rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            width: 100%;
+        }
+        .btn-reload:hover {
+            background: #0b5ed7;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <img src="/icons/icon-192.png" alt="Paskola" class="app-logo">
+        <h1>Anda Sedang Offline</h1>
+        <p>Tidak ada koneksi internet terdeteksi. Silakan periksa jaringan Wi-Fi atau data seluler Anda untuk melanjutkan.</p>
+        <button class="btn-reload" onclick="window.location.reload()">
+            🔄 Muat Ulang Halaman
+        </button>
+    </div>
+</body>
+</html>

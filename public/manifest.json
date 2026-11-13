@@ -1,0 +1,51 @@
+{
+    "id": "paskola-sims-app",
+    "name": "Paskola - Sistem Informasi Manajemen Sekolah",
+    "short_name": "Paskola",
+    "description": "Platform Terpadu Informasi Akademik, Administrasi, dan Komunikasi Sekolah",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#ffffff",
+    "theme_color": "#0d6efd",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "categories": ["education", "productivity"],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "url": "/dashboard",
+            "description": "Buka Dashboard Paskola"
+        },
+        {
+            "name": "Pengumuman",
+            "url": "/announcements",
+            "description": "Lihat Pengumuman Sekolah Terbaru"
+        }
+    ]
+}

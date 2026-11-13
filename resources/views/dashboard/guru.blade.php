@@ -229,39 +229,36 @@
     <div class="col-lg-4 d-flex flex-column gap-4">
         <!-- Pengumuman -->
         <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex align-items-center gap-2">
-                <i class="bi bi-bell text-primary"></i>
-                <h6 class="fw-bold mb-0" style="font-size:0.95rem;">Pengumuman</h6>
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell text-primary"></i>
+                    <h6 class="fw-bold mb-0" style="font-size:0.95rem;">Pengumuman</h6>
+                </div>
+                <a href="{{ route('announcements.index') }}" class="text-primary text-decoration-none fw-semibold" style="font-size:0.75rem;">
+                    Lihat Semua
+                </a>
             </div>
             <div class="card-body px-4 pb-4">
-                <div class="d-flex flex-column gap-3">
-                    <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                <div class="d-flex flex-column gap-2">
+                    @forelse($announcements ?? [] as $ann)
+                    <a href="{{ route('announcements.show', $ann->id) }}" class="p-3 border rounded-3 bg-light bg-opacity-50 text-decoration-none text-dark transition-all hover-shadow">
                         <div class="d-flex gap-2">
-                            <i class="bi bi-info-circle text-warning mt-1" style="font-size:0.9rem;"></i>
-                            <div>
-                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">Rapat guru mingguan - Senin 14.00</h6>
-                                <div class="text-muted" style="font-size:0.75rem;">1 jam lalu</div>
+                            <i class="bi {{ $ann->priority === 'urgent' ? 'bi-exclamation-circle text-danger' : ($ann->is_pinned ? 'bi-pin-fill text-warning' : 'bi-info-circle text-primary') }} mt-1" style="font-size:0.9rem;"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">{{ $ann->title }}</h6>
+                                <div class="text-muted d-flex align-items-center justify-content-between" style="font-size:0.75rem;">
+                                    <span>{{ $ann->author->name ?? 'Sekolah' }}</span>
+                                    <span>{{ $ann->published_at ? $ann->published_at->diffForHumans() : $ann->created_at->diffForHumans() }}</span>
+                                </div>
                             </div>
                         </div>
+                    </a>
+                    @empty
+                    <div class="text-center py-3 text-muted" style="font-size:0.85rem;">
+                        <i class="bi bi-bell-slash mb-1 d-block fs-5"></i>
+                        Belum ada pengumuman
                     </div>
-                    <div class="p-3 border rounded-3 bg-light bg-opacity-50">
-                        <div class="d-flex gap-2">
-                            <i class="bi bi-exclamation-circle text-danger mt-1" style="font-size:0.9rem;"></i>
-                            <div>
-                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">Deadline input nilai UTS: 12 Juli 2026</h6>
-                                <div class="text-muted" style="font-size:0.75rem;">3 jam lalu</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-3 border rounded-3 bg-light bg-opacity-50">
-                        <div class="d-flex gap-2">
-                            <i class="bi bi-check-circle text-success mt-1" style="font-size:0.9rem;"></i>
-                            <div>
-                                <h6 class="fw-semibold mb-1 text-dark" style="font-size:0.85rem;">Pelatihan digitalisasi kelas - 15 Juli</h6>
-                                <div class="text-muted" style="font-size:0.75rem;">Kemarin</div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>

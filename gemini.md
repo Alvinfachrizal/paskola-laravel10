@@ -81,9 +81,14 @@ Beri tanda `[x]` pada fitur yang sudah tuntas (Backend & Frontend) dan teruji se
 - [ ] Generate Rapor PDF/Cetak
 
 ### F. Komunikasi & Pengumuman
-- [x] Skema Database `announcements` terbuat
-- [ ] API & UI Broadcast Pengumuman (Sekolah -> Guru/Siswa/Ortu)
-- [ ] Infrastruktur Notifikasi (Email / Push Notification via FCM / WhatsApp)
+- [x] Skema Database `announcements` terbuat + patch kolom `published_at`, `expires_at`, `priority`
+- [x] Skema Database `push_subscriptions` (VAPID Web Push) & `announcement_reads` (tracking baca)
+- [x] API & UI Broadcast Pengumuman (Admin/Kepsek full, Guru target kelas, Siswa/Ortu read-only)
+- [x] Infrastruktur Notifikasi: Web Push Notification (PWA/VAPID) langsung ke HP/browser tanpa native app
+- [x] Service Worker (`sw.js`) + Web App Manifest (`manifest.json`) + Real-time Unread Badge Polling
+- [x] Integrasi Widget Pengumuman Real-time pada Dashboard Guru, Siswa, dan Orang Tua
+- [x] Feature Test 8/8 skenario lolos (`tests/Feature/AnnouncementTest.php`)
+- [x] Seeder demo data pengumuman (`AnnouncementSeeder`) + Dokumentasi lengkap `docs/pengumuman-notifikasi.md`
 - [ ] (Opsional) Fitur Chat/Pesan Internal
 
 ### G. Keuangan Sekolah (Finance)
@@ -163,12 +168,12 @@ AI **WAJIB** mematuhi aturan berikut selama beroperasi:
 | G. Keuangan (Lengkap) | DB Schema, Enum, Model, StudentFinanceService, Seeder, CRUD Master, Observer awal, Scheduler bulanan, Upload Bukti, Verifikasi Admin, Dashboard Rekap, Riwayat Gabungan |
 | Manajemen Modul (Lengkap) | DB modules+dependencies, Model, ModuleService (cache+validasi dependency), Middleware EnsureModuleActive, Controller, UI toggle card, dokumentasi |
 | L. Ujian Online (Pilihan Ganda) | Bank soal, Manajemen Ujian (jadwal/durasi), Pengacakan soal per siswa, Sesi ujian (autosave, timer server-side), Penilaian, Approval hasil, Ujian susulan |
+| F. Pengumuman & Notifikasi | Broadcast pengumuman multi-role & kelas, Web Push PWA 100% (VAPID, Service Worker, Manifest, A2HS Install Prompt Android/iOS, Offline indicator, test 13/13) |
 
 ### 🔄 Sprint Berikutnya (Rekomendasi Urutan)
 1. **Kehadiran & Absensi** (Modul D — bergantung pada Jadwal Pelajaran)
-2. **Pengumuman** (Modul F — Broadcast ke peran tertentu)
-3. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
+2. **Generate PDF Rapor** (Modul E — PDF cetak rapor resmi)
+3. **Kalkulasi Nilai Final Rapor** (Sinkronisasi nilai ujian online ke modul Grading)
 4. **PPDB — Fitur Lanjutan** (notifikasi, payment gateway)
-5. **Kalkulasi Nilai Final Rapor** (Sinkronisasi nilai ujian online ke modul Grading)
 
-*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-10-08 setelah penyempurnaan alur bertahap & verifikasi pembayaran PPDB.)*
+*(Catatan: File ini harus rutin diperbarui ketika sebuah Modul MVP telah diselesaikan. Terakhir diperbarui: 2026-11-13 setelah penyelesaian Modul F Pengumuman & Web Push PWA.)*

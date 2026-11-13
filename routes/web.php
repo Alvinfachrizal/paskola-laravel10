@@ -286,5 +286,34 @@ Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
     });
 });
 
+// ─── Pengumuman & Notifikasi ──────────────────────────────────────────────────
+Route::middleware(['auth', 'module.active:pengumuman'])->prefix('announcements')->name('announcements.')->group(function () {
+
+    // Semua role yang login bisa lihat & baca
+    Route::get('/',          [\App\Http\Controllers\Announcements\AnnouncementController::class, 'index'])->name('index');
+    Route::get('/{announcement}', [\App\Http\Controllers\Announcements\AnnouncementController::class, 'show'])->name('show');
+
+    // API: unread count untuk badge navbar (polling)
+    Route::get('/api/unread-count', [\App\Http\Controllers\Announcements\AnnouncementController::class, 'unreadCount'])->name('unread-count');
+
+    // Buat & kelola: Admin, Kepsek, Guru
+    Route::middleware(['role:Super Admin|Admin|Kepala Sekolah|Guru'])->group(function () {
+        Route::get('/create',              [\App\Http\Controllers\Announcements\AnnouncementController::class, 'create'])->name('create');
+        Route::post('/',                   [\App\Http\Controllers\Announcements\AnnouncementController::class, 'store'])->name('store');
+        Route::get('/{announcement}/edit', [\App\Http\Controllers\Announcements\AnnouncementController::class, 'edit'])->name('edit');
+        Route::put('/{announcement}',      [\App\Http\Controllers\Announcements\AnnouncementController::class, 'update'])->name('update');
+        Route::delete('/{announcement}',   [\App\Http\Controllers\Announcements\AnnouncementController::class, 'destroy'])->name('destroy');
+        Route::post('/{announcement}/publish',   [\App\Http\Controllers\Announcements\AnnouncementController::class, 'publish'])->name('publish');
+        Route::post('/{announcement}/unpublish', [\App\Http\Controllers\Announcements\AnnouncementController::class, 'unpublish'])->name('unpublish');
+    });
+});
+
+// ─── Web Push Subscription ────────────────────────────────────────────────────
+Route::middleware('auth')->prefix('push')->name('push.')->group(function () {
+    Route::post('/subscribe',   [\App\Http\Controllers\Announcements\PushSubscriptionController::class, 'store'])->name('subscribe');
+    Route::post('/unsubscribe', [\App\Http\Controllers\Announcements\PushSubscriptionController::class, 'destroy'])->name('unsubscribe');
+    Route::get('/status',       [\App\Http\Controllers\Announcements\PushSubscriptionController::class, 'status'])->name('status');
+});
+
 require __DIR__.'/auth.php';
 

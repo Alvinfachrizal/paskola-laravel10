@@ -48,6 +48,9 @@ class DatabaseSeeder extends Seeder
 
             // ── PPDB ──────────────────────────────────────────────────────────
             PpdbSeeder::class,             // 10. Gelombang & pendaftar
+
+            // ── Pengumuman & Notifikasi ───────────────────────────────────────
+            AnnouncementSeeder::class,     // 11. Pengumuman demo & broadcast
         ]);
 
         $this->command->newLine();
