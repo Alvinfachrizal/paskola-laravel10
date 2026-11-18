@@ -212,9 +212,20 @@
                     <a class="nav-link" href="{{ route('ppdb.register.form') }}"><i class="bi bi-pencil-square me-1"></i>Daftar Sekarang</a>
                 </li>
             </ul>
-            <a href="{{ route('ppdb.cek-status.form') }}" class="btn btn-outline-light btn-sm">
-                <i class="bi bi-search me-1"></i>Cek Status
-            </a>
+            <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+                <a href="{{ route('ppdb.cek-status.form') }}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-search me-1"></i>Cek Status
+                </a>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-speedometer2 me-1"></i>Dashboard SIMS
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-warning btn-sm fw-semibold text-dark">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login SIMS
+                    </a>
+                @endauth
+            </div>
         </div>
     </div>
 </nav>
